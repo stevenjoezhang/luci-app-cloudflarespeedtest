@@ -13,7 +13,8 @@ function index()
 	page.dependent = false
 	page.acl_depends = { "luci-app-cloudflarespeedtest" }
 
-	entry({"admin", "services", "cloudflarespeedtest", "general"}, cbi("cloudflarespeedtest/cloudflarespeedtest"), _("Base Setting"), 1)
+	entry({"admin", "services", "cloudflarespeedtest", "general"}, cbi("cloudflarespeedtest/base"), _("Base Setting"), 1)
+	entry({"admin", "services", "cloudflarespeedtest", "third-party"}, form("cloudflarespeedtest/third-party"), _("Third Party Settings"), 2)
 	entry({"admin", "services", "cloudflarespeedtest", "logread"}, form("cloudflarespeedtest/logread"), _("Logs"), 2)
 
 	entry({"admin", "services", "cloudflarespeedtest", "status"}, call("act_status")).leaf = true
@@ -44,7 +45,7 @@ function get_log()
 	local fs = require "nixio.fs"
 	local e = {}
 	e.running = luci.sys.call("busybox ps -w | grep cdnspeedtest | grep -v grep >/dev/null") == 0
-	e.log= fs.readfile("/var/log/cloudflarespeedtest.log") or ""	 
+	e.log= fs.readfile("/var/log/cloudflarespeedtest.log") or ""
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(e)
 end
