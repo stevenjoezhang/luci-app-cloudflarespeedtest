@@ -14,8 +14,8 @@ function index()
 	page.acl_depends = { "luci-app-cloudflarespeedtest" }
 
 	entry({"admin", "services", "cloudflarespeedtest", "general"}, cbi("cloudflarespeedtest/base"), _("Base Setting"), 1)
-	entry({"admin", "services", "cloudflarespeedtest", "third-party"}, form("cloudflarespeedtest/third-party"), _("Third Party Settings"), 2)
-	entry({"admin", "services", "cloudflarespeedtest", "logread"}, form("cloudflarespeedtest/logread"), _("Logs"), 2)
+	entry({"admin", "services", "cloudflarespeedtest", "third-party"}, cbi("cloudflarespeedtest/third-party"), _("Third Party Settings"), 2)
+	entry({"admin", "services", "cloudflarespeedtest", "logread"}, form("cloudflarespeedtest/logread"), _("Logs"), 3)
 
 	entry({"admin", "services", "cloudflarespeedtest", "status"}, call("act_status")).leaf = true
 	entry({"admin", "services", "cloudflarespeedtest", "stop"}, call("act_stop"))

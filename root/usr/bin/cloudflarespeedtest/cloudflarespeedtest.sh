@@ -125,7 +125,7 @@ function speed_test(){
     rm -rf $LOG_FILE
 
     if [ ! -e /usr/bin/cdnspeedtest ]; then
-        download_core
+        download_core >>$LOG_FILE
     fi
 
     command="/usr/bin/cdnspeedtest -sl $((speed*125/1000)) -url ${custome_url} -o ${IP_FILE}"

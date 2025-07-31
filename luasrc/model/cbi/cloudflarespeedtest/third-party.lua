@@ -3,11 +3,13 @@ require("luci.sys")
 local uci = luci.model.uci.cursor()
 
 m = Map('cloudflarespeedtest')
-m.title = translate('Cloudflare Speed Test')
+m.title = translate("Third party applications settings")
+
+s = m:section(TypedSection, 'global')
+s.addremove = false
+s.anonymous = true
 
 -- [[ 第三方应用设置 ]]--
-
-s = m:section(NamedSection, "servers", "section", translate("Third party applications settings"))
 
 if nixio.fs.access("/etc/config/shadowsocksr") then
 	s:tab("ssr", translate("Shadowsocksr Plus+"))

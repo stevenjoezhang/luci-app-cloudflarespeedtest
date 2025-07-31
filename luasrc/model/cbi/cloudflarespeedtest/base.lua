@@ -5,13 +5,13 @@ local uci = luci.model.uci.cursor()
 m = Map('cloudflarespeedtest')
 m.title = translate('Cloudflare Speed Test')
 
+s = m:section(TypedSection, 'global')
+s.addremove = false
+s.anonymous = true
+
 -- [[ 基本设置 ]]--
 
 s:tab("basic", translate("Basic"))
-
-s = m:section(NamedSection, 'global')
-s.addremove = false
-s.anonymous = true
 
 o=s:taboption("basic", Flag,"ipv6_enabled",translate("IPv6 Enabled"))
 o.description = translate("Provides only one method, if IPv6 is enabled, IPv4 will not be tested")
@@ -36,7 +36,7 @@ o.default = "gfw"
 
 -- [[ Cron设置 ]]--
 
-s = m:section(TypedSection, "cron", translate("Cron Settings"))
+s:tab("cron", translate("Cron Settings"))
 
 o=s:taboption("cron", Flag,"enabled",translate("Enabled"))
 o.description = translate("Enabled scheduled task test Cloudflare IP")
@@ -61,6 +61,11 @@ minute:depends("custome_cors_enabled", 0)
 -- [[ 高级设置 ]]--
 
 s:tab("advanced", translate("Advanced"))
+
+o = s:taboption("advanced", Flag, "advanced", translate("Advanced"))
+o.description = translate("Not recommended")
+o.default = 0
+o.rmempty=false
 
 o = s:taboption("advanced", Value, "threads", translate("Thread"))
 o.datatype ="uinteger"
