@@ -5,36 +5,48 @@
     const STOP_URL = '<%=luci.dispatcher.build_url("admin", "services", "cloudflarespeedtest","stop")%>';
     const LOG_URL = '<%=luci.dispatcher.build_url("admin", "services", "cloudflarespeedtest","logread")%>';
 
-    XHR.poll(3, STATUS_URL, null,
+    XHR.get(STATUS_URL, null,
         function(x, data) {
-            if (data) {
-                buttonStatus(data.running)
-            }
+            if (data) buttonStatus(data.running);
         }
     );
 
-	function cloudflarespeedtest_act_start() {
-        buttonStatus(true)
-            XHR.get(RUN_URL, null, () => {
-        });
-        setTimeout(() => { window.location = LOG_URL }, 500);
-        return false;
-	}
+    function cloudflarespeedtest_act_toggle() {
+        const button = document.getElementById('cloudflarespeedtest_toggle');
+        const isRunning = button.classList.contains('cbi-button-reset');
 
-    function cloudflarespeedtest_act_stop(){
-        XHR.get(STOP_URL, null, () => {
-            buttonStatus(false);
-        });
+        // Disable button during request
+        button.disabled = true;
+
+        if (isRunning) {
+            // Stop action
+            XHR.get(STOP_URL, null, () => {
+                button.disabled = false;
+                buttonStatus(false);
+            });
+        } else {
+            // Start action
+            XHR.get(RUN_URL, null, () => {
+                button.disabled = false;
+                buttonStatus(true);
+                setTimeout(() => { window.location = LOG_URL }, 500);
+            });
+        }
         return false;
     }
 
     function buttonStatus(running){
-        document.getElementById('cloudflarespeedtest_start').style.display  =  running ? "none" : "block"
-        document.getElementById('cloudflarespeedtest_stop').style.display   =  running ? "block" : "none"
+        const button = document.getElementById('cloudflarespeedtest_toggle');
+        if (running) {
+            button.value = "<%= translate('Stop') %>";
+            button.className = 'btn cbi-button cbi-button-apply cbi-button-reset';
+        } else {
+            button.value = "<%= translate('Start') %>";
+            button.className = 'btn cbi-button cbi-button-apply cloudflarespeedtest-save';
+        }
     }
 //]]></script>
 
-<input id="cloudflarespeedtest_start" type="button" style="display:block;" class="btn cbi-button cbi-button-apply" value="<%= translate('Start') %>" onclick="cloudflarespeedtest_act_start()" />
-<input id="cloudflarespeedtest_stop" type="button" style="display:none;" class="btn cbi-button cbi-button-apply" value="<%= translate('Stop') %>" onclick="cloudflarespeedtest_act_stop()" />
+<input id="cloudflarespeedtest_toggle" type="button" class="btn cbi-button cbi-button-apply cloudflarespeedtest-save" value="<%= translate('Start') %>" onclick="cloudflarespeedtest_act_toggle()" />
 
 <%+cbi/valuefooter%>

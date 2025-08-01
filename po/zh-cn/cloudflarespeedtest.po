@@ -142,6 +142,12 @@ msgstr "运行中"
 msgid "NOT RUNNING"
 msgstr "未运行"
 
+msgid "Crontab enabled"
+msgstr "定时运行已启用"
+
+msgid "Crontab disabled"
+msgstr "定时运行已禁用"
+
 msgid "Collecting data..."
 msgstr "收集数据中..."
 
@@ -150,9 +156,6 @@ msgstr "第三方应用设置"
 
 msgid "Auto refresh"
 msgstr "自动刷新"
-
-msgid "Status"
-msgstr "状态"
 
 msgid "Proxy Mode"
 msgstr "代理模式"
