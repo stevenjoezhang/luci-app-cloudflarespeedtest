@@ -45,7 +45,8 @@ function get_log()
 	local fs = require "nixio.fs"
 	local e = {}
 	e.running = luci.sys.call("busybox ps -w | grep cdnspeedtest | grep -v grep >/dev/null") == 0
-	e.log= fs.readfile("/var/log/cloudflarespeedtest.log") or ""
+	local log_content = fs.readfile("/var/log/cloudflarespeedtest.log") or ""
+	e.log = log_content:gsub("%[[^%]]*%]", "\n")
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(e)
 end
