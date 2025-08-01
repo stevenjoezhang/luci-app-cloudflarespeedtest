@@ -26,7 +26,7 @@ echolog() {
 }
 
 function read_config(){
-    get_global_config "enabled" "speed" "custome_url" "threads" "custome_cors_enabled" "custome_cron" "t" "tp" "dt" "dn" "dd" "tl" "tll" "ipv6_enabled" "advanced" "proxy_mode"
+    get_global_config "enabled" "speed" "custom_url" "threads" "custom_cron_enabled" "custom_cron" "t" "tp" "dt" "dn" "dd" "tl" "tll" "ipv6_enabled" "advanced" "proxy_mode"
     get_servers_config "ssr_services" "ssr_enabled" "passwall_enabled" "passwall_services" "passwall2_enabled" "passwall2_services" "bypass_enabled" "bypass_services" "vssr_enabled" "vssr_services" "DNS_enabled" "HOST_enabled" "MosDNS_enabled" "openclash_restart"
 }
 
@@ -128,7 +128,7 @@ function speed_test(){
         download_core >>$LOG_FILE
     fi
 
-    command="/usr/bin/cdnspeedtest -sl $((speed*125/1000)) -url ${custome_url} -o ${IP_FILE}"
+    command="/usr/bin/cdnspeedtest -sl $((speed*125/1000)) -url ${custom_url} -o ${IP_FILE}"
 
     if [ $ipv6_enabled -eq "1" ] ;then
         command="${command} -f ${IPV6_TXT}"

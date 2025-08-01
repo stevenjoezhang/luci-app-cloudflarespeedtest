@@ -7,7 +7,7 @@ config global 'global'
 	option advanced '0'
 	option tl '200'
 	option tll '40'
-	option custome_url 'https://speed.cloudflare.com/__down?bytes=300000000'
+	option custom_url 'https://speed.cloudflare.com/__down?bytes=300000000'
 	option threads '200'
 	option speed '100'
 

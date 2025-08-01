@@ -29,7 +29,7 @@ o.description =translate("100M broadband download speed is about 12M/s. It is no
 o.datatype ="uinteger"
 o.rmempty=false
 
-o=s:taboption("basic", Value,"custome_url",translate("Custome Url"))
+o=s:taboption("basic", Value,"custom_url",translate("Custome Url"))
 o.description = translate("<a href=\"https://github.com/XIU2/CloudflareSpeedTest/issues/168\" target=\"_blank\">How to create</a>")
 o.rmempty=false
 
@@ -49,20 +49,20 @@ o.description = translate("Enabled scheduled task test Cloudflare IP")
 o.rmempty=false
 o.default = 0
 
-o=s:taboption("cron", Flag,"custome_cors_enabled",translate("Custome Cron Enabled"))
+o=s:taboption("cron", Flag,"custom_cron_enabled",translate("Custome Cron Enabled"))
 o.default = 0
 o.rmempty=false
 
-o = s:taboption("cron", Value, "custome_cron", translate("Custome Cron"))
-o:depends("custome_cors_enabled", 1)
+o = s:taboption("cron", Value, "custom_cron", translate("Custome Cron"))
+o:depends("custom_cron_enabled", 1)
 
 hour = s:taboption("cron", Value, "hour", translate("Hour"))
 hour.datatype = "range(0,23)"
-hour:depends("custome_cors_enabled", 0)
+hour:depends("custom_cron_enabled", 0)
 
 minute = s:taboption("cron", Value, "minute", translate("Minute"))
 minute.datatype = "range(0,59)"
-minute:depends("custome_cors_enabled", 0)
+minute:depends("custom_cron_enabled", 0)
 
 -- [[ 高级设置 ]]--
 
