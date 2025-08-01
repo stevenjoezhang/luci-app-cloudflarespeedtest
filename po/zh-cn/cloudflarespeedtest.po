@@ -91,10 +91,10 @@ msgstr "速度测试"
 msgid "Best IP"
 msgstr "最佳IP"
 
-msgid "TEST AND APPLY"
-msgstr "测试并应用"
+msgid "Start"
+msgstr "开始"
 
-msgid "STOP"
+msgid "Stop"
 msgstr "停止"
 
 msgid "Advanced"

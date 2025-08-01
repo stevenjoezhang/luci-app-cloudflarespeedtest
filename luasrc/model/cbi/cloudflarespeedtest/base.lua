@@ -13,6 +13,11 @@ s.anonymous = true
 
 s:tab("basic", translate("Basic"))
 
+o = s:taboption("basic", Button,"speedtest",translate("Speed Test"))
+o.inputtitle=translate("Start")
+o.template = "cloudflarespeedtest/actions"
+o.description = translate("Test the speed of Cloudflare IP, and apply the best IP to the system")
+
 o=s:taboption("basic", Flag,"ipv6_enabled",translate("IPv6 Enabled"))
 o.description = translate("Provides only one method, if IPv6 is enabled, IPv4 will not be tested")
 o.default = 0
@@ -105,10 +110,6 @@ o = s:taboption("advanced", Value, "tp", translate("Port"))
 o.rmempty=true
 o.default = 443
 o.datatype ="port"
-
-o = s:taboption("basic", DummyValue, '', '')
-o.rawhtml = true
-o.template = "cloudflarespeedtest/actions"
 
 e=m:section(TypedSection,"global",translate("Best IP"))
 e.anonymous=true
