@@ -182,7 +182,7 @@ s:tab("dnstab", translate("DNS"))
 o=s:taboption("dnstab", Flag, "DNS_enabled",translate("DNS Enabled"))
 
 o=s:taboption("dnstab", ListValue, "DNS_type", translate("DNS Type"))
-o:value("aliyu", translate("AliyuDNS"))
+o:value("aliyun", translate("Alibaba Cloud DNS"))
 o:depends("DNS_enabled", 1)
 
 o=s:taboption("dnstab", Value,"app_key",translate("Access Key ID"))

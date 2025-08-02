@@ -417,7 +417,7 @@ function restart_app(){
 function alidns_ip(){
     if [ "x${DNS_enabled}" == "x1" ] ;then
         get_servers_config "DNS_type" "app_key" "app_secret" "main_domain" "sub_domain" "line"
-        if [ $DNS_type == "aliyu" ] ;then
+        if [ $DNS_type == "aliyun" ] ;then
             for sub in $sub_domain
             do
                 /usr/bin/cloudflarespeedtest/aliddns.sh $app_key $app_secret $main_domain $sub $line $ipv6_enabled $bestip

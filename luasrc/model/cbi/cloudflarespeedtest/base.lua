@@ -32,10 +32,11 @@ o.rmempty=false
 o=s:taboption("basic", Value,"custom_url",translate("Custom Url"))
 o.description = translate("<a href=\"https://github.com/XIU2/CloudflareSpeedTest/issues/168\" target=\"_blank\">How to create</a>")
 o.rmempty=false
+o.default = "https://speed.cloudflare.com/__down?bytes=300000000"
 
 o = s:taboption("basic", ListValue, "proxy_mode", translate("Proxy Mode"))
-o:value("nil", translate("HOLD"))
 o.description = translate("during the speed testing, swith to which mode")
+o:value("nil", translate("HOLD"))
 o:value("gfw", translate("GFW List"))
 o:value("close", translate("CLOSE"))
 o.default = "gfw"
@@ -54,15 +55,15 @@ o.default = 0
 o.rmempty=false
 
 o = s:taboption("cron", Value, "custom_cron", translate("Custom Cron"))
+o.description = translate("Example: 0 */3 * * *")
 o:depends("custom_cron_enabled", 1)
 
-hour = s:taboption("cron", Value, "hour", translate("Hour"))
-hour.datatype = "range(0,23)"
-hour:depends("custom_cron_enabled", 0)
-
-minute = s:taboption("cron", Value, "minute", translate("Minute"))
-minute.datatype = "range(0,59)"
-minute:depends("custom_cron_enabled", 0)
+o = s:taboption("cron", ListValue, "hour", translate("Hour"))
+o:depends("custom_cron_enabled", 0)
+for _, hour in ipairs({1, 2, 3, 4, 6, 8, 12, 24}) do
+    o:value(hour, translatef("Every %d hour(s)", hour))
+end
+o.default = 24
 
 -- [[ 高级设置 ]]--
 

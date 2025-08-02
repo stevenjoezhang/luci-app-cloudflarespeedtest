@@ -41,11 +41,14 @@ msgstr "启用自定义Cron"
 msgid "Custom Cron"
 msgstr "自定义Cron"
 
+msgid "Example: 0 */3 * * *"
+msgstr "例如: 0 */3 * * *"
+
 msgid "Hour"
 msgstr "小时"
 
-msgid "Minute"
-msgstr "分钟"
+msgid ""Every %d hour(s)""
+msgstr "每 %d 小时"
 
 msgid "100M broadband download speed is about 12M/s. It is not recommended to fill in an excessively large value, and it may run all the time."
 msgstr "100M的宽带下载大概为速度12M/s。不推荐填过大的值，可能出现一直运行。"
@@ -178,7 +181,7 @@ msgstr "启用DNS"
 msgid "DNS Type"
 msgstr "DNS类型"
 
-msgid "AliyuDNS"
+msgid "Alibaba Cloud DNS"
 msgstr "阿里云DNS"
 
 msgid "Access Key ID"
