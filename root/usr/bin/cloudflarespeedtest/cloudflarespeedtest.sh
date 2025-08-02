@@ -1,7 +1,7 @@
 #!/bin/sh
 
-LOG_FILE='/var/log/cloudflarespeedtest.log'
-IP_FILE='/usr/share/cloudflarespeedtestresult.txt'
+LOG_FILE='/tmp/cloudflarespeedtest.log'
+IP_FILE='/usr/share/CloudflareSpeedTest/result.csv'
 IPV4_TXT='/usr/share/CloudflareSpeedTest/ip.txt'
 IPV6_TXT='/usr/share/CloudflareSpeedTest/ipv6.txt'
 
@@ -233,6 +233,8 @@ function speed_test(){
     echolog "-----------start----------"
     $command >> $LOG_FILE 2>&1
     echolog "-----------end------------"
+    # Append current time to IP_FILE
+    echo "# Speed test time: $(date +'%Y-%m-%d %H:%M:%S')" >> $IP_FILE
 }
 
 function ip_replace(){

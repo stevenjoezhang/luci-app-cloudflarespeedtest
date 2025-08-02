@@ -1,5 +1,5 @@
 #!/bin/sh
-LOG_FILE='/var/log/cloudflarespeedtest.log'
+LOG_FILE='/tmp/cloudflarespeedtest.log'
 
 echolog() {
 	local d="$(date "+%Y-%m-%d %H:%M:%S")"

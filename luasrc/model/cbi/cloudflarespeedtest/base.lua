@@ -114,7 +114,7 @@ o.datatype ="port"
 
 e=m:section(TypedSection,"global",translate("Best IP"))
 e.anonymous=true
-local a="/usr/share/cloudflarespeedtestresult.txt"
+local a="/usr/share/CloudflareSpeedTest/result.csv"
 tvIPs=e:option(TextValue,"syipstext")
 tvIPs.rows=8
 tvIPs.readonly="readonly"
