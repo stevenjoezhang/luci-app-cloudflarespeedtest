@@ -7,16 +7,30 @@
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   }
-  #dualAxisChart {
+  .chart-row {
+    display: flex;
+    gap: 30px;
+  }
+  @media (max-width: 767px) {
+    .chart-row {
+      flex-direction: column;
+    }
+  }
+  .chart-container canvas {
     display: block;
     width: 100%;
-    height: 400px;
+    height: 300px;
   }
 </style>
 <div class="cbi-section">
   <h3><%=self.title%></h3>
-  <div class="chart-container">
-    <canvas id="dualAxisChart"></canvas>
+  <div class="chart-row">
+    <div class="chart-container">
+      <canvas id="latencyChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <canvas id="speedChart"></canvas>
+    </div>
   </div>
 </div>
 
@@ -34,7 +48,7 @@
     const speedData   = dataPoints.map(d => d.speed);
 
     // 公共 tooltip 配置
-    const tooltipOptions = {
+    const createTooltipOptions = (unitText) => ({
       mode: 'index',
       intersect: false,
       callbacks: {
@@ -47,15 +61,13 @@
           return `IP: ${d.ip}，地区码: ${d.region}`;
         },
 
-        // 正常 label 列出各自的值，不再重复 ip/地区
+        // 正常 label 列出各自的值
         label: ctx => {
           const val = ctx.parsed.y;
-          return ctx.dataset.yAxisID === 'y-left'
-            ? `延迟: ${val} ms`
-            : `下载: ${val} MB/s`;
+          return `${ctx.dataset.label}: ${val} ${unitText}`;
         }
       }
-    };
+    });
 
     // X 轴时间刻度配置
     const timeScale = {
@@ -76,26 +88,51 @@
       },
     };
 
-    // 创建双轴图
-    new Chart(document.getElementById('dualAxisChart'), {
+    // 创建延迟图表
+    new Chart(document.getElementById('latencyChart'), {
       type: 'line',
       data: {
         labels,
         datasets: [
           {
-            label: '延迟 (ms)',
+            label: '延迟',
             data: latencyData,
-            yAxisID: 'y-left',
             borderColor: 'rgba(75, 192, 192, 1)',
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
             tension: 0.3,
             fill: false,
             pointRadius: 4
-          },
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: createTooltipOptions('ms'),
+        plugins: {
+          tooltip: createTooltipOptions('ms'),
+          legend: {
+            position: 'top'
+          }
+        },
+        scales: {
+          x: timeScale,
+          y: {
+            type: 'linear',
+            title: { display: true, text: '延迟 (ms)' }
+          }
+        }
+      }
+    });
+
+    // 创建速度图表
+    new Chart(document.getElementById('speedChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
           {
-            label: '下载速度 (MB/s)',
+            label: '下载速度',
             data: speedData,
-            yAxisID: 'y-right',
             borderColor: 'rgba(255, 159, 64, 1)',
             backgroundColor: 'rgba(255, 159, 64, 0.2)',
             tension: 0.3,
@@ -106,26 +143,18 @@
       },
       options: {
         responsive: true,
-        interaction: tooltipOptions,
+        interaction: createTooltipOptions('MB/s'),
         plugins: {
-          tooltip: tooltipOptions,
+          tooltip: createTooltipOptions('MB/s'),
           legend: {
             position: 'top'
           }
         },
         scales: {
           x: timeScale,
-          'y-left': {
+          y: {
             type: 'linear',
-            position: 'left',
-            title: { display: true, text: '延迟 (ms)' },
-            grid: { drawOnChartArea: true }
-          },
-          'y-right': {
-            type: 'linear',
-            position: 'right',
-            title: { display: true, text: '速度 (MB/s)' },
-            grid: { drawOnChartArea: false }
+            title: { display: true, text: '速度 (MB/s)' }
           }
         }
       }
