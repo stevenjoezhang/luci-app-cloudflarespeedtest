@@ -2,11 +2,11 @@ require("luci.sys")
 
 local uci = luci.model.uci.cursor()
 
-m = Map('cloudflarespeedtest', 'Cloudflare Speed Test')
+m = Map("cloudflarespeedtest", "Cloudflare Speed Test")
 m.description = translate("A LuCI app for OpenWRT that schedules and runs CloudflareSpeedTest, automatically selecting and applying the fastest Cloudflare IPs to outbound proxy setups")
 m:section(SimpleSection).template = "cloudflarespeedtest/status"
 
-s = m:section(TypedSection, 'global')
+s = m:section(TypedSection, "global")
 s.addremove = false
 s.anonymous = true
 
@@ -113,10 +113,11 @@ o.rmempty=true
 o.default = 443
 o.datatype ="port"
 
-e=m:section(TypedSection,"global",translate("Best IP"))
-e.anonymous=true
+s=m:section(TypedSection, "global")
+s.title = translate("Best IP")
+s.anonymous=true
 local a="/usr/share/CloudflareSpeedTest/result.csv"
-tvIPs=e:option(TextValue,"syipstext")
+tvIPs=s:option(TextValue,"syipstext")
 tvIPs.rows=8
 tvIPs.readonly="readonly"
 tvIPs.wrap="off"
@@ -130,5 +131,9 @@ function tvIPs.cfgvalue(e,e)
 end
 tvIPs.write=function(e,e,e)
 end
+
+s = m:section(SimpleSection)
+s.title = translate("History Chart")
+s.template = "cloudflarespeedtest/chart"
 
 return m

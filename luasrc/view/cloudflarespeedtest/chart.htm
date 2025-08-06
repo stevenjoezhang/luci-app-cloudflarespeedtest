@@ -1,0 +1,138 @@
+<style>
+  .chart-container {
+    width: 100%;
+    margin: 20px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  #dualAxisChart {
+    display: block;
+    width: 100%;
+    height: 400px;
+  }
+</style>
+<div class="cbi-section">
+  <h3><%=self.title%></h3>
+  <div class="chart-container">
+    <canvas id="dualAxisChart"></canvas>
+  </div>
+</div>
+
+<!-- Chart.js 核心库 -->
+<script src="/luci-static/resources/cloudflarespeedtest/chart.js"></script>
+<!-- 日期适配器：chartjs-adapter-date-fns -->
+<script src="/luci-static/resources/cloudflarespeedtest/chartjs-adapter-date-fns.js"></script>
+<script>
+  const HISTORY_URL = '<%=luci.dispatcher.build_url("admin", "services", "cloudflarespeedtest","gethistory")%>';
+
+  function draw(dataPoints) {
+    // 提取各系列数据
+    const labels      = dataPoints.map(d => d.time);
+    const latencyData = dataPoints.map(d => d.latency);
+    const speedData   = dataPoints.map(d => d.speed);
+
+    // 公共 tooltip 配置
+    const tooltipOptions = {
+      mode: 'index',
+      intersect: false,
+      callbacks: {
+        // 只显示一次时间
+        title: ctx => `时间: ${ctx[0].label}`,
+
+        // 在 body 前面插入一行 ip+地区
+        beforeBody: ctx => {
+          const d = dataPoints[ctx[0].dataIndex];
+          return `IP: ${d.ip}，地区码: ${d.region}`;
+        },
+
+        // 正常 label 列出各自的值，不再重复 ip/地区
+        label: ctx => {
+          const val = ctx.parsed.y;
+          return ctx.dataset.yAxisID === 'y-left'
+            ? `延迟: ${val} ms`
+            : `下载: ${val} MB/s`;
+        }
+      }
+    };
+
+    // X 轴时间刻度配置
+    const timeScale = {
+      type: 'time',
+      time: {
+        parser: 'yyyy-MM-dd HH:mm:ss',
+        tooltipFormat: 'yyyy-MM-dd HH:mm:ss',
+        unit: 'hour',
+        displayFormats: { hour: 'MM-dd HH:mm' }
+      },
+      title: { display: true, text: '时间' },
+      offset: true,
+      ticks: {
+        autoSkip: true,
+        maxTicksLimit: 6,
+        maxRotation: 45,
+        minRotation: 0
+      },
+    };
+
+    // 创建双轴图
+    new Chart(document.getElementById('dualAxisChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: '延迟 (ms)',
+            data: latencyData,
+            yAxisID: 'y-left',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            tension: 0.3,
+            fill: false,
+            pointRadius: 4
+          },
+          {
+            label: '下载速度 (MB/s)',
+            data: speedData,
+            yAxisID: 'y-right',
+            borderColor: 'rgba(255, 159, 64, 1)',
+            backgroundColor: 'rgba(255, 159, 64, 0.2)',
+            tension: 0.3,
+            fill: false,
+            pointRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: tooltipOptions,
+        plugins: {
+          tooltip: tooltipOptions,
+          legend: {
+            position: 'top'
+          }
+        },
+        scales: {
+          x: timeScale,
+          'y-left': {
+            type: 'linear',
+            position: 'left',
+            title: { display: true, text: '延迟 (ms)' },
+            grid: { drawOnChartArea: true }
+          },
+          'y-right': {
+            type: 'linear',
+            position: 'right',
+            title: { display: true, text: '速度 (MB/s)' },
+            grid: { drawOnChartArea: false }
+          }
+        }
+      }
+    });
+  }
+
+  XHR.get(HISTORY_URL, null, function(x, data) {
+    draw(data);
+  });
+</script>

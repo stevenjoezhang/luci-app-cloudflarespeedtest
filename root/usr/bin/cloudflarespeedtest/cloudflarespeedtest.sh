@@ -120,6 +120,24 @@ function download_core() {
     mv -f "$downloadbin" /usr/bin/cdnspeedtest
 }
 
+function rotate_result_files(){
+    # 滚动保存result.csv文件，最多保存10个版本
+    if [ -f "$IP_FILE" ]; then
+        # 删除最旧的文件 (.9)
+        [ -f "${IP_FILE}.9" ] && rm -f "${IP_FILE}.9"
+
+        # 从.8到.1逐级重命名
+        for i in 8 7 6 5 4 3 2 1; do
+            if [ -f "${IP_FILE}.$i" ]; then
+                mv "${IP_FILE}.$i" "${IP_FILE}.$((i+1))"
+            fi
+        done
+
+        # 将当前的result.csv重命名为result.csv.1
+        mv "$IP_FILE" "${IP_FILE}.1"
+    fi
+}
+
 function speed_test(){
 
     rm -rf $LOG_FILE
@@ -127,6 +145,9 @@ function speed_test(){
     if [ ! -e /usr/bin/cdnspeedtest ]; then
         download_core >>$LOG_FILE
     fi
+
+    # 执行滚动保存
+    rotate_result_files
 
     command="/usr/bin/cdnspeedtest -sl $((speed*125/1000)) -url ${custom_url} -o ${IP_FILE}"
 

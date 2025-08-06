@@ -4,7 +4,7 @@ local uci = luci.model.uci.cursor()
 
 m = Map('cloudflarespeedtest', "Third party applications settings")
 
-s = m:section(TypedSection, 'global')
+s = m:section(TypedSection)
 s.addremove = false
 s.anonymous = true
 
