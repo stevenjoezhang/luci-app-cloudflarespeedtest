@@ -1,17 +1,19 @@
 # luci-app-cloudflarespeedtest
 
-[![Upload Release Asset](https://github.com/mingxiaoyu/luci-app-cloudflarespeedtest/actions/workflows/build.yml/badge.svg)](https://github.com/mingxiaoyu/luci-app-cloudflarespeedtest/actions/workflows/build.yml)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/stevenjoezhang/luci-app-cloudflarespeedtest/build.yml?style=for-the-badge&logo=GitHub)
 
-## Cloudflare speed test for LuCI / 适用于 LuCI 的 loudflare speed test插件
-- 一个用于定时执行Cloudflare IP 速度测试的插件。集成SSR+和PASSWALL替换IP
-- [Download / 下载 ipk](https://github.com/mingxiaoyu/luci-app-cloudflarespeedtest/releases)
+Download `.ipk` and `.apk` from [Releases](https://github.com/stevenjoezhang/luci-app-cloudflarespeedtest/releases)
 
-## Depends / 依赖
-- [openwrt-cdnspeedtest](https://github.com/immortalwrt-collections/openwrt-cdnspeedtest)
+## Features
 
-## Compile / 编译
+- 支持手动或定时执行 Cloudflare IP 速度测试
+- 集成SSR+和PASSWALL，自动替换IP
+- 支持展示速度测试结果图表
+- 支持自定义测试参数
+
+## Build
+
 ```bash
-
 #compile package only
 make package/luci-app-cloudflarespeedtest/compile v=99
 
@@ -21,8 +23,11 @@ make menuconfig
 make V=99
 ```
 
-![overview](screenshots/overview.jpeg)
+## Screenshots
 
-# 感激
+![](screenshots/overview.png)
+![](screenshots/chart.png)
+
+## Acknowledgements
 
 [CloudflareSpeedTest](https://github.com/XIU2/CloudflareSpeedTest)
