@@ -1,4 +1,3 @@
-
 config global 'global'
 	option hour '24'
 	option enabled '0'
@@ -8,7 +7,7 @@ config global 'global'
 	option tll '40'
 	option custom_url 'https://speed.cloudflare.com/__down?bytes=300000000'
 	option threads '200'
-	option speed '100'
+	option speed_limit '10'
 
 config servers 'servers'
 	option ssr_enabled '0'
@@ -17,4 +16,3 @@ config servers 'servers'
 	option bypass_enabled '0'
 	option vssr_enabled '0'
 	option DNS_enabled '0'
-

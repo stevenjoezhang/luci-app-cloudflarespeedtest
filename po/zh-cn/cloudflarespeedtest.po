@@ -15,7 +15,7 @@ msgid "<a href=\"https://github.com/mingxiaoyu/luci-app-cloudflarespeedtest\" ta
 msgstr "<a href=\"https://github.com/mingxiaoyu/luci-app-cloudflarespeedtest\" target=\"_blank\">GitHub项目地址</a>"
 
 msgid "Cloudflare Speed Test"
-msgstr "Cloudflare速度测试"
+msgstr "Cloudflare 速度测试"
 
 msgid "Base Setting"
 msgstr "基本设置"
@@ -29,17 +29,17 @@ msgstr "启用"
 msgid "Enabled scheduled task test Cloudflare IP"
 msgstr "启用计划任务测试 Cloudflare IP"
 
-msgid "Broadband speed"
-msgstr "宽带速度"
+msgid "Speed threshold (MB/s)"
+msgstr "速度阈值（MB/s）"
 
 msgid "Custom URL"
 msgstr "自定义地址"
 
 msgid "Enable custom cron"
-msgstr "启用自定义Cron"
+msgstr "启用自定义 Cron"
 
 msgid "Custom Cron"
-msgstr "自定义Cron"
+msgstr "自定义 Cron"
 
 msgid "Example: 0 */3 * * *"
 msgstr "例如: 0 */3 * * *"
@@ -50,37 +50,37 @@ msgstr "间隔"
 msgid ""Every %d hour(s)""
 msgstr "每 %d 小时"
 
-msgid "100M broadband download speed is about 12M/s. It is not recommended to fill in an excessively large value, and it may run all the time."
-msgstr "100M的宽带下载大概为速度12M/s。不推荐填过大的值，可能出现一直运行。"
+msgid "Only IPs with a download speed greater than this threshold will be retained. Please note, do not set this value too high — if no IP meets the requirement, CloudflareSpeedTest may waste excessive time and resources"
+msgstr "只有下载速度大于这个阈值的 IP 会被保留。请注意，不要将其设置为过于大的值，如果无法找到满足要求的 IP，CloudflareSpeedTest 可能会浪费过多的时间和资源"
 
 msgid "Shadowsocksr Plus+ Enabled"
-msgstr "启用ShadowSocksR Plus+"
+msgstr "启用 ShadowSocksR Plus+"
 
 msgid "Passwall Enabled"
-msgstr "启用Passwall"
+msgstr "启用 Passwall"
 
 msgid "PassWall2 Enabled"
-msgstr "启用PassWall2"
+msgstr "启用 PassWall2"
 
 msgid "Bypass Enabled"
-msgstr "启用Bypass"
+msgstr "启用 Bypass"
 
 msgid "Vssr Enabled"
-msgstr "启用Vssr"
+msgstr "启用 Vssr"
 msgid "Shadowsocksr Servers"
-msgstr "ShadowSocksR Plus+服务"
+msgstr "ShadowSocksR Plus+ 服务"
 
 msgid "Passwall Servers"
-msgstr "Passwall服务"
+msgstr "Passwall 服务"
 
 msgid "Passwall2 Servers"
-msgstr "Passwall2服务"
+msgstr "Passwall2 服务"
 
 msgid "Bypass Servers"
-msgstr "Bypass服务"
+msgstr "Bypass 服务"
 
 msgid "Vssr Servers"
-msgstr "Vssr服务"
+msgstr "Vssr 服务"
 
 msgid "Please select a service"
 msgstr "请选择一项服务"
@@ -89,7 +89,7 @@ msgid "Speed test"
 msgstr "速度测试"
 
 msgid "Best IP"
-msgstr "最佳IP"
+msgstr "最佳 IP"
 
 msgid "Start"
 msgstr "开始"
@@ -110,7 +110,7 @@ msgid "Average latency lower bound"
 msgstr "平均延迟下限"
 
 msgid "Enable IPv6"
-msgstr "启用IPv6"
+msgstr "启用 IPv6"
 
 msgid "Delayed speed measurement time"
 msgstr "延迟测速次数"
@@ -131,7 +131,7 @@ msgid "Not recommended"
 msgstr "不推荐"
 
 msgid "Provides only one method, if IPv6 is enabled, IPv4 will not be tested"
-msgstr "IPv4和IPv6只能选一个！！！！！！"
+msgstr "IPv4 和 IPv6 只能选一个！！！！！！"
 
 msgid "<a href=\"https://github.com/XIU2/CloudflareSpeedTest/issues/168\" target=\"_blank\">How to create</a>"
 msgstr "<a href=\"https://github.com/XIU2/CloudflareSpeedTest/issues/168\" target=\"_blank\">如何创建</a>"
@@ -164,7 +164,7 @@ msgid "HOLD"
 msgstr "保持"
 
 msgid "GFW List"
-msgid "GFW列表"
+msgid "GFW 列表"
 
 msgid "CLOSE"
 msgstr "关闭"
@@ -176,13 +176,13 @@ msgid "DNS"
 msgstr "DNS"
 
 msgid "DNS Enabled"
-msgstr "启用DNS"
+msgstr "启用 DNS"
 
 msgid "DNS Type"
-msgstr "DNS类型"
+msgstr "DNS 类型"
 
 msgid "Alibaba Cloud DNS"
-msgstr "阿里云DNS"
+msgstr "阿里云 DNS"
 
 msgid "Access Key ID"
 msgstr "Access Key ID"
@@ -218,7 +218,7 @@ msgid "mobile"
 msgstr "移动"
 
 msgid "HOST Enabled"
-msgstr "启用HOST"
+msgstr "启用 HOST"
 
 msgid "Domain"
 msgstr "域名"

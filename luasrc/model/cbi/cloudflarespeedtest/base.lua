@@ -24,8 +24,8 @@ o.description = translate("Provides only one method, if IPv6 is enabled, IPv4 wi
 o.default = 0
 o.rmempty=false
 
-o=s:taboption("basic", Value,"speed",translate("Broadband speed"))
-o.description =translate("100M broadband download speed is about 12M/s. It is not recommended to fill in an excessively large value, and it may run all the time.");
+o=s:taboption("basic", Value,"speed_limit",translate("Speed threshold (MB/s)"))
+o.description =translate("Only IPs with a download speed greater than this threshold will be retained. Please note, do not set this value too high — if no IP meets the requirement, CloudflareSpeedTest may waste excessive time and resources.");
 o.datatype ="uinteger"
 o.rmempty=false
 
