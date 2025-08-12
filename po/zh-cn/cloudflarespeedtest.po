@@ -32,10 +32,10 @@ msgstr "启用计划任务测试 Cloudflare IP"
 msgid "Broadband speed"
 msgstr "宽带速度"
 
-msgid "Custom Url"
+msgid "Custom URL"
 msgstr "自定义地址"
 
-msgid "Custom Cron Enabled"
+msgid "Enable custom cron"
 msgstr "启用自定义Cron"
 
 msgid "Custom Cron"
@@ -44,8 +44,8 @@ msgstr "自定义Cron"
 msgid "Example: 0 */3 * * *"
 msgstr "例如: 0 */3 * * *"
 
-msgid "Hour"
-msgstr "小时"
+msgid "Interval"
+msgstr "间隔"
 
 msgid ""Every %d hour(s)""
 msgstr "每 %d 小时"
@@ -85,7 +85,7 @@ msgstr "Vssr服务"
 msgid "Please select a service"
 msgstr "请选择一项服务"
 
-msgid "Speed Test"
+msgid "Speed test"
 msgstr "速度测试"
 
 msgid "Best IP"
@@ -103,13 +103,13 @@ msgstr "高级模式"
 msgid "Thread"
 msgid "线程数"
 
-msgid "Average Latency Cap"
+msgid "Average latency cap"
 msgstr "平均延迟上限"
 
-msgid "Average Latency Lower Bound"
+msgid "Average latency lower bound"
 msgstr "平均延迟下限"
 
-msgid "IPv6 Enabled"
+msgid "Enable IPv6"
 msgstr "启用IPv6"
 
 msgid "Delayed speed measurement time"
@@ -157,7 +157,7 @@ msgstr "第三方应用设置"
 msgid "Auto refresh"
 msgstr "自动刷新"
 
-msgid "Proxy Mode"
+msgid "Proxy mode"
 msgstr "代理模式"
 
 msgid "HOLD"
@@ -169,8 +169,8 @@ msgid "GFW列表"
 msgid "CLOSE"
 msgstr "关闭"
 
-msgid "during the speed testing, swith to which mode"
-msgstr "在速度测试期间，切换到哪种模式"
+msgid "Switch to the selected proxy mode during the speed test"
+msgstr "在速度测试时切换到选定的代理模式"
 
 msgid "DNS"
 msgstr "DNS"

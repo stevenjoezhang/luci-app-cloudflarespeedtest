@@ -14,12 +14,12 @@ s.anonymous = true
 
 s:tab("basic", translate("Basic"))
 
-o = s:taboption("basic", Button,"speedtest",translate("Speed Test"))
+o = s:taboption("basic", Button,"speedtest",translate("Speed test"))
 o.inputtitle=translate("Start")
 o.template = "cloudflarespeedtest/actions"
 o.description = translate("Test the speed of Cloudflare IP, and apply the best IP to the system")
 
-o=s:taboption("basic", Flag,"ipv6_enabled",translate("IPv6 Enabled"))
+o=s:taboption("basic", Flag,"ipv6_enabled",translate("Enable IPv6"))
 o.description = translate("Provides only one method, if IPv6 is enabled, IPv4 will not be tested")
 o.default = 0
 o.rmempty=false
@@ -29,13 +29,13 @@ o.description =translate("100M broadband download speed is about 12M/s. It is no
 o.datatype ="uinteger"
 o.rmempty=false
 
-o=s:taboption("basic", Value,"custom_url",translate("Custom Url"))
+o=s:taboption("basic", Value,"custom_url",translate("Custom URL"))
 o.description = translate("<a href=\"https://github.com/XIU2/CloudflareSpeedTest/issues/168\" target=\"_blank\">How to create</a>")
 o.rmempty=false
 o.default = "https://speed.cloudflare.com/__down?bytes=300000000"
 
-o = s:taboption("basic", ListValue, "proxy_mode", translate("Proxy Mode"))
-o.description = translate("during the speed testing, swith to which mode")
+o = s:taboption("basic", ListValue, "proxy_mode", translate("Proxy mode"))
+o.description = translate("Switch to the selected proxy mode during the speed test")
 o:value("nil", translate("HOLD"))
 o:value("gfw", translate("GFW List"))
 o:value("close", translate("CLOSE"))
@@ -50,7 +50,7 @@ o.description = translate("Enabled scheduled task test Cloudflare IP")
 o.rmempty=false
 o.default = 0
 
-o=s:taboption("cron", Flag,"custom_cron_enabled",translate("Custom Cron Enabled"))
+o=s:taboption("cron", Flag,"custom_cron_enabled",translate("Enable custom cron"))
 o.default = 0
 o.rmempty=false
 
@@ -58,7 +58,7 @@ o = s:taboption("cron", Value, "custom_cron", translate("Custom Cron"))
 o.description = translate("Example: 0 */3 * * *")
 o:depends("custom_cron_enabled", 1)
 
-o = s:taboption("cron", ListValue, "hour", translate("Hour"))
+o = s:taboption("cron", ListValue, "hour", translate("Interval"))
 o:depends("custom_cron_enabled", 0)
 for _, hour in ipairs({1, 2, 3, 4, 6, 8, 12, 24}) do
     o:value(hour, translatef("Every %d hour(s)", hour))
@@ -79,12 +79,12 @@ o.datatype ="uinteger"
 o.default = 200
 o.rmempty=true
 
-o = s:taboption("advanced", Value, "tl", translate("Average Latency Cap"))
+o = s:taboption("advanced", Value, "tl", translate("Average latency cap"))
 o.datatype ="uinteger"
 o.default = 200
 o.rmempty=true
 
-o = s:taboption("advanced", Value, "tll", translate("Average Latency Lower Bound"))
+o = s:taboption("advanced", Value, "tll", translate("Average latency lower bound"))
 o.datatype ="uinteger"
 o.default = 40
 o.rmempty=true
