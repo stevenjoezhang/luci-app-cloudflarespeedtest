@@ -13,7 +13,7 @@ LUCI_PKGARCH:=all
 PKG_VERSION:=1.6
 PKG_RELEASE:=0
 PKG_LICENSE:=AGPL-3.0
-PKG_MAINTAINER:=mingxiaoyu <fengying0347@163.com>
+PKG_MAINTAINER:=<https://github.com/stevenjoezhang/luci-app-cloudflarespeedtest>
 
 include $(TOPDIR)/feeds/luci/luci.mk
 

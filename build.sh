@@ -27,7 +27,7 @@ Maintainer: mingxiaoyu <fengying0347@163.com>
 Section: luci
 Priority: optional
 Description: LuCI support for Cloudflares Speed Test
-Source: http://github.com/mingxiaoyu/luci-app-cloudflarespeedtest
+Source: https://github.com/stevenjoezhang/luci-app-cloudflarespeedtest
 EOF
 cat > $workdir/luci-app-cloudflarespeedtest/CONTROL/postinst <<EOF
 #!/bin/sh
