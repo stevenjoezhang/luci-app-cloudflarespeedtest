@@ -4,9 +4,9 @@ XHR.poll(3, '<%=luci.dispatcher.build_url("admin", "services", "cloudflarespeedt
         const tb = document.getElementById('cloudflarespeedtest_status');
         if (data && tb) {
             if (data.running) {
-                tb.innerHTML = '<em><b><font color=green>Cloudflare Speed Test <%:RUNNING %></font></b></em>';
+                tb.innerHTML = '<em><b><font color=green><%:Cloudflare Speed Test %> <%:RUNNING %></font></b></em>';
             } else {
-                tb.innerHTML = '<em><b><font color=red>Cloudflare Speed Test <%:NOT RUNNING %></font></b></em>';
+                tb.innerHTML = '<em><b><font color=red><%:Cloudflare Speed Test %> <%:NOT RUNNING %></font></b></em>';
             }
             if (data.cron) {
                 tb.innerHTML += '<em><b><font color=green> <%:Crontab enabled %></font></b></em>';

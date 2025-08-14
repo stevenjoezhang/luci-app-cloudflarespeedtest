@@ -2,7 +2,7 @@ require("luci.sys")
 
 local uci = luci.model.uci.cursor()
 
-m = Map("cloudflarespeedtest", "Cloudflare Speed Test")
+m = Map("cloudflarespeedtest", translate("Cloudflare Speed Test"))
 m.description = translate("Schedules and runs CloudflareSpeedTest, automatically selecting and applying the fastest Cloudflare IPs to outbound proxy setups").."<br/>"..translate("<a href=\"https://github.com/stevenjoezhang/luci-app-cloudflarespeedtest\" target=\"_blank\">⭐ Star on GitHub</a>")
 m:section(SimpleSection).template = "cloudflarespeedtest/status"
 
