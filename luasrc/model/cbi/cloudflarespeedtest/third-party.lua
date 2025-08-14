@@ -2,7 +2,7 @@ require("luci.sys")
 
 local uci = luci.model.uci.cursor()
 
-m = Map('cloudflarespeedtest', "Third party applications settings")
+m = Map('cloudflarespeedtest', translate("Third Party Applications Settings"))
 
 s = m:section(TypedSection)
 s.addremove = false

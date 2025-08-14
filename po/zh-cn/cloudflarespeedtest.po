@@ -17,11 +17,26 @@ msgstr "<a href=\"https://github.com/stevenjoezhang/luci-app-cloudflarespeedtest
 msgid "Cloudflare Speed Test"
 msgstr "Cloudflare 速度测试"
 
-msgid "Base Setting"
-msgstr "基本设置"
+msgid "Schedules and runs CloudflareSpeedTest, automatically selecting and applying the fastest Cloudflare IPs to outbound proxy setups"
+msgstr "定时运行 CloudflareSpeedTest，并自动选择和应用最快的 Cloudflare IP 到出站代理设置中"
+
+msgid "Plugin Settings"
+msgstr "插件设置"
+
+msgid "Third Party Settings"
+msgstr "第三方设置"
+
+msgid "Basic Settings"
+msgstr "基础设置"
+
+msgid "Crontab Settings"
+msgstr "计划任务设置"
 
 msgid "Logs"
 msgstr "日志"
+
+msgid "Test the speed of Cloudflare IP, and apply the best IP to the system"
+msgstr "测试 Cloudflare IP 的速度，并将最佳 IP 应用到系统"
 
 msgid "Enabled"
 msgstr "启用"
@@ -47,7 +62,7 @@ msgstr "例如: 0 */3 * * *"
 msgid "Interval"
 msgstr "间隔"
 
-msgid ""Every %d hour(s)""
+msgid "Every %d hour(s)"
 msgstr "每 %d 小时"
 
 msgid "Only IPs with a download speed greater than this threshold will be retained. Please note, do not set this value too high — if no IP meets the requirement, CloudflareSpeedTest may waste excessive time and resources"
@@ -90,6 +105,9 @@ msgstr "速度测试"
 
 msgid "Best IP"
 msgstr "最佳 IP"
+
+msgid "History Chart"
+msgstr "历史图表"
 
 msgid "Start"
 msgstr "开始"
@@ -151,7 +169,7 @@ msgstr "定时运行已禁用"
 msgid "Collecting data..."
 msgstr "收集数据中..."
 
-msgid "Third party applications settings"
+msgid "Third Party Applications Settings"
 msgstr "第三方应用设置"
 
 msgid "Auto refresh"

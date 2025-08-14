@@ -3,7 +3,7 @@ require("luci.sys")
 local uci = luci.model.uci.cursor()
 
 m = Map("cloudflarespeedtest", "Cloudflare Speed Test")
-m.description = translate("A LuCI app for OpenWRT that schedules and runs CloudflareSpeedTest, automatically selecting and applying the fastest Cloudflare IPs to outbound proxy setups").."<br/>"..translate("<a href=\"https://github.com/stevenjoezhang/luci-app-cloudflarespeedtest\" target=\"_blank\">⭐ Star on GitHub</a>")
+m.description = translate("Schedules and runs CloudflareSpeedTest, automatically selecting and applying the fastest Cloudflare IPs to outbound proxy setups").."<br/>"..translate("<a href=\"https://github.com/stevenjoezhang/luci-app-cloudflarespeedtest\" target=\"_blank\">⭐ Star on GitHub</a>")
 m:section(SimpleSection).template = "cloudflarespeedtest/status"
 
 s = m:section(TypedSection, "global")
@@ -12,7 +12,7 @@ s.anonymous = true
 
 -- [[ 基本设置 ]]--
 
-s:tab("basic", translate("Basic"))
+s:tab("basic", translate("Basic Settings"))
 
 o = s:taboption("basic", Button,"speedtest",translate("Speed test"))
 o.inputtitle=translate("Start")
@@ -25,7 +25,7 @@ o.default = 0
 o.rmempty=false
 
 o=s:taboption("basic", Value,"speed_limit",translate("Speed threshold (MB/s)"))
-o.description =translate("Only IPs with a download speed greater than this threshold will be retained. Please note, do not set this value too high — if no IP meets the requirement, CloudflareSpeedTest may waste excessive time and resources.");
+o.description =translate("Only IPs with a download speed greater than this threshold will be retained. Please note, do not set this value too high — if no IP meets the requirement, CloudflareSpeedTest may waste excessive time and resources");
 o.datatype ="uinteger"
 o.rmempty=false
 
@@ -43,7 +43,7 @@ o.default = "gfw"
 
 -- [[ Cron设置 ]]--
 
-s:tab("cron", translate("Cron Settings"))
+s:tab("cron", translate("Crontab Settings"))
 
 o=s:taboption("cron", Flag,"enabled",translate("Enabled"))
 o.description = translate("Enabled scheduled task test Cloudflare IP")
