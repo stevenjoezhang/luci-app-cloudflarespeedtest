@@ -17,10 +17,10 @@ s:tab("basic", translate("Basic Settings"))
 o = s:taboption("basic", Button,"speedtest",translate("Speed test"))
 o.inputtitle=translate("Start")
 o.template = "cloudflarespeedtest/actions"
-o.description = translate("Test the speed of Cloudflare IP, and apply the best IP to the system")
+o.description = translate("Test the speed of Cloudflare IP and apply the best IP to the system")
 
 o=s:taboption("basic", Flag,"ipv6_enabled",translate("Enable IPv6"))
-o.description = translate("Provides only one method, if IPv6 is enabled, IPv4 will not be tested")
+o.description = translate("Only one protocol can be tested. If IPv6 is enabled, IPv4 will not be tested.")
 o.default = 0
 o.rmempty=false
 
@@ -46,7 +46,7 @@ o.default = "gfw"
 s:tab("cron", translate("Crontab Settings"))
 
 o=s:taboption("cron", Flag,"enabled",translate("Enabled"))
-o.description = translate("Enabled scheduled task test Cloudflare IP")
+o.description = translate("Enabled scheduled task to test Cloudflare IP")
 o.rmempty=false
 o.default = 0
 
@@ -74,7 +74,7 @@ o.description = translate("Not recommended")
 o.default = 0
 o.rmempty=false
 
-o = s:taboption("advanced", Value, "threads", translate("Thread"))
+o = s:taboption("advanced", Value, "threads", translate("Thread Count"))
 o.datatype ="uinteger"
 o.default = 200
 o.rmempty=true
@@ -133,7 +133,7 @@ tvIPs.write=function(e,e,e)
 end
 
 s = m:section(SimpleSection)
-s.title = translate("History Chart")
+s.title = translate("History Charts")
 s.template = "cloudflarespeedtest/chart"
 
 return m

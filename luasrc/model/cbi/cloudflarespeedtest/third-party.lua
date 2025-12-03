@@ -2,7 +2,7 @@ require("luci.sys")
 
 local uci = luci.model.uci.cursor()
 
-m = Map('cloudflarespeedtest', translate("Third Party Applications Settings"))
+m = Map('cloudflarespeedtest', translate("Third Party Application Settings"))
 
 s = m:section(TypedSection)
 s.addremove = false
@@ -11,9 +11,9 @@ s.anonymous = true
 -- [[ 第三方应用设置 ]]--
 
 if nixio.fs.access("/etc/config/shadowsocksr") then
-	s:tab("ssr", translate("Shadowsocksr Plus+"))
+	s:tab("ssr", translate("ShadowSocksR Plus+"))
 
-	o=s:taboption("ssr", Flag, "ssr_enabled",translate("Shadowsocksr Plus+ Enabled"))
+	o=s:taboption("ssr", Flag, "ssr_enabled",translate("ShadowSocksR Plus+ Enabled"))
 	o.rmempty=true
 
 	local ssr_server_table = {}
@@ -33,7 +33,7 @@ if nixio.fs.access("/etc/config/shadowsocksr") then
 	table.sort(ssr_key_table)
 
 	o = s:taboption("ssr", DynamicList, "ssr_services",
-			translate("Shadowsocksr Servers"),
+			translate("ShadowSocksR Servers"),
 			translate("Please select a service"))
 
 	for _, key in pairs(ssr_key_table) do

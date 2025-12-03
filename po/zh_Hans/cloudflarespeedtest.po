@@ -35,13 +35,13 @@ msgstr "计划任务设置"
 msgid "Logs"
 msgstr "日志"
 
-msgid "Test the speed of Cloudflare IP, and apply the best IP to the system"
+msgid "Test the speed of Cloudflare IP and apply the best IP to the system"
 msgstr "测试 Cloudflare IP 的速度，并将最佳 IP 应用到系统"
 
 msgid "Enabled"
 msgstr "启用"
 
-msgid "Enabled scheduled task test Cloudflare IP"
+msgid "Enabled scheduled task to test Cloudflare IP"
 msgstr "启用计划任务测试 Cloudflare IP"
 
 msgid "Speed threshold (MB/s)"
@@ -68,7 +68,7 @@ msgstr "每 %d 小时"
 msgid "Only IPs with a download speed greater than this threshold will be retained. Please note, do not set this value too high — if no IP meets the requirement, CloudflareSpeedTest may waste excessive time and resources"
 msgstr "只有下载速度大于这个阈值的 IP 会被保留。请注意，不要将其设置为过于大的值，如果无法找到满足要求的 IP，CloudflareSpeedTest 可能会浪费过多的时间和资源"
 
-msgid "Shadowsocksr Plus+ Enabled"
+msgid "ShadowSocksR Plus+ Enabled"
 msgstr "启用 ShadowSocksR Plus+"
 
 msgid "Passwall Enabled"
@@ -82,7 +82,7 @@ msgstr "启用 Bypass"
 
 msgid "Vssr Enabled"
 msgstr "启用 Vssr"
-msgid "Shadowsocksr Servers"
+msgid "ShadowSocksR Servers"
 msgstr "ShadowSocksR Plus+ 服务"
 
 msgid "Passwall Servers"
@@ -106,7 +106,7 @@ msgstr "速度测试"
 msgid "Best IP"
 msgstr "最佳 IP"
 
-msgid "History Chart"
+msgid "History Charts"
 msgstr "历史图表"
 
 msgid "Start"
@@ -118,8 +118,8 @@ msgstr "停止"
 msgid "Advanced"
 msgstr "高级模式"
 
-msgid "Thread"
-msgid "线程数"
+msgid "Thread Count"
+msgstr "线程数"
 
 msgid "Average latency cap"
 msgstr "平均延迟上限"
@@ -148,7 +148,7 @@ msgstr "端口"
 msgid "Not recommended"
 msgstr "不推荐"
 
-msgid "Provides only one method, if IPv6 is enabled, IPv4 will not be tested"
+msgid "Only one protocol can be tested. If IPv6 is enabled, IPv4 will not be tested."
 msgstr "IPv4 和 IPv6 只能选一个！！！！！！"
 
 msgid "<a href=\"https://github.com/XIU2/CloudflareSpeedTest/issues/168\" target=\"_blank\">How to create</a>"
@@ -169,7 +169,7 @@ msgstr "定时运行已禁用"
 msgid "Collecting data..."
 msgstr "收集数据中..."
 
-msgid "Third Party Applications Settings"
+msgid "Third Party Application Settings"
 msgstr "第三方应用设置"
 
 msgid "Auto refresh"
