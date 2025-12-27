@@ -4,7 +4,7 @@ local uci = luci.model.uci.cursor()
 
 m = Map('cloudflarespeedtest', translate("Third Party Application Settings"))
 
-s = m:section(TypedSection)
+s = m:section(TypedSection, "servers")
 s.addremove = false
 s.anonymous = true
 
@@ -109,8 +109,8 @@ if nixio.fs.access("/etc/config/passwall2") then
 
 end
 
-s:tab("bypasstab", translate("Bypass"))
 if nixio.fs.access("/etc/config/bypass") then
+	s:tab("bypasstab", translate("Bypass"))
 
 	o=s:taboption("bypasstab", Flag, "bypass_enabled",translate("Bypass Enabled"))
 	o.rmempty=true
@@ -143,8 +143,8 @@ if nixio.fs.access("/etc/config/bypass") then
 
 end
 
-s:tab("vssrtab", translate("Vssr"))
 if nixio.fs.access("/etc/config/vssr") then
+	s:tab("vssrtab", translate("Vssr"))
 
 	o=s:taboption("vssrtab", Flag, "vssr_enabled",translate("Vssr Enabled"))
 	o.rmempty=true
