@@ -39,60 +39,28 @@ function appinit(){
 }
 
 check_wgetcurl(){
-	which curl && downloader="curl -L -k --retry 2 --connect-timeout 20 -o" && return
-	which wget-ssl && downloader="wget-ssl --no-check-certificate -t 2 -T 20 -O" && return
-	[ -z "$1" ] && opkg update || (echo error opkg && EXIT 1)
-	[ -z "$1" ] && (opkg remove wget wget-nossl --force-depends ; opkg install wget ; check_wgetcurl 1 ;return)
-	[ "$1" == "1" ] && (opkg install curl ; check_wgetcurl 2 ; return)
-	echo error curl and wget && EXIT 1
+    which curl && downloader="curl -L -k --retry 2 --connect-timeout 20 -o" && return
+    which wget-ssl && downloader="wget-ssl --no-check-certificate -t 2 -T 20 -O" && return
+    [ -z "$1" ] && opkg update || (echo error opkg && EXIT 1)
+    [ -z "$1" ] && (opkg remove wget wget-nossl --force-depends ; opkg install wget ; check_wgetcurl 1 ;return)
+    [ "$1" == "1" ] && (opkg install curl ; check_wgetcurl 2 ; return)
+    echo error curl and wget && EXIT 1
 }
 
 function download_core() {
-    Archt="$(opkg info kernel | grep Architecture | awk -F "[ _]" '{print($2)}')"
-    case $Archt in
-    "i386"|"i486"|"i686"|"i786")
-    Arch="386"
-    ;;
-    "x86")
-    Arch="amd64"
-    ;;
-    "mipsel")
-    Arch="mipsle"
-    ;;
-    "mips64el")
-    Arch="mips64le"
-    ;;
-    "mips")
-    Arch="mips"
-    ;;
-    "mips64")
-    Arch="mips64"
-    ;;
-    "arm")
-    um=`uname -m`
-    if [ $um = "armv8l" ]; then
-        Arch="armv7"
-    elif [ $um = "armv6l" ]; then
-        Arch="armv6"
-    else
-        Arch="armv5"
-    fi
-    ;;
-    "aarch64")
-    Arch="arm64"
-    ;;
-    "powerpc")
-    Arch="ppc"
-    echo -e "error not support $Archt"
-    EXIT 1
-    ;;
-    "powerpc64")
-    Arch="ppc64le"
-    ;;
-    *)
-    echo -e "error not support $Archt if you can use offical release please issue a bug" 
-    EXIT 1
-    ;;
+    um="$(uname -m)"
+    case "$um" in
+        i386|i686)     Arch="386" ;;
+        x86_64)        Arch="amd64" ;;
+        aarch64)       Arch="arm64" ;;
+        armv5*)        Arch="armv5" ;;
+        armv6*)        Arch="armv6" ;;
+        armv7*|armv8l) Arch="armv7" ;;
+        mips64el)      Arch="mips64le" ;;
+        mips64)        Arch="mips64" ;;
+        mipsel)        Arch="mipsle" ;;
+        mips)          Arch="mips" ;;
+        *) echo "Error: $um is not supported"; exit 1 ;;
     esac
 
     echo -e "start download"
@@ -106,15 +74,15 @@ function download_core() {
     fi
 
     if [ "${link##*.}" == "gz" ]; then
-		tar -zxf "/tmp/${link##*/}" -C "/tmp/"
-		if [ ! -e "/tmp/cfst" ]; then
-			echo -e "Failed to download core."
-			exit 1
-		fi
-		downloadbin="/tmp/cfst"
-	else
-		downloadbin="/tmp/${link##*/}"
-	fi
+        tar -zxf "/tmp/${link##*/}" -C "/tmp/"
+        if [ ! -e "/tmp/cfst" ]; then
+            echo -e "Failed to download core."
+            exit 1
+        fi
+        downloadbin="/tmp/cfst"
+    else
+        downloadbin="/tmp/${link##*/}"
+    fi
 
     echo -e "download success start copy"
     mv -f "$downloadbin" /usr/bin/cdnspeedtest
