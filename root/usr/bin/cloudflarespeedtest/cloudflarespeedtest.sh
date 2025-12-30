@@ -140,7 +140,8 @@ function speed_test(){
             command="${command} -tp ${tp}"
         fi
     else
-        command="${command} -tl 200 -tll 40 -n 200 -t 4 -dt 10 -dn 1"
+        # Default param: -tl 200 -tll 40 -n 200 -t 4 -dt 10
+        command="${command} -dn 5"
     fi
 
     appinit

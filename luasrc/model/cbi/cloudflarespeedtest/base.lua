@@ -101,7 +101,7 @@ o.rmempty=true
 
 o = s:taboption("advanced", Value, "dn", translate("Number of download speed tests"))
 o.datatype ="uinteger"
-o.default = 1
+o.default = 5
 o.rmempty=true
 
 o = s:taboption("advanced", Flag, "dd", translate("Disable download speed test"))
