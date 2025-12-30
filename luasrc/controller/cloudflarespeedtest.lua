@@ -36,23 +36,22 @@ end
 
 function act_stop()
  	luci.sys.call("busybox ps -w | grep cdnspeedtest | grep -v grep | xargs kill -9 >/dev/null")
-	luci.http.write('')
+	luci.http.prepare_content("application/json")
+	luci.http.write("{}")
 end
 
 function act_start()
 	act_stop()
 	luci.sys.call("/usr/bin/cloudflarespeedtest/cloudflarespeedtest.sh start &")
-	luci.http.write('')
+	luci.http.prepare_content("application/json")
+	luci.http.write("{}")
 end
 
 function get_log()
 	local fs = require "nixio.fs"
-	local e = {}
-	e.running = luci.sys.call("busybox ps -w | grep cdnspeedtest | grep -v grep >/dev/null") == 0
 	local log_content = fs.readfile("/tmp/cloudflarespeedtest.log") or ""
-	e.log = log_content:gsub("%[[^%]]*%]", "\n")
-	luci.http.prepare_content("application/json")
-	luci.http.write_json(e)
+	log_content = log_content:gsub("%[[^%]]*%]", "\n")
+	luci.http.write(log_content)
 end
 
 function get_history()

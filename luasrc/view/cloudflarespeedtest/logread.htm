@@ -8,7 +8,7 @@
     function getlog(){
         XHR.get(LOG_URL, null, function(x, data) {
             // 移除方括号内容并去除连续重复行
-            let log_content = data.log || "";
+            let log_content = x.responseText || "";
             let lines = log_content.split(/\r?\n/);
             let filtered_lines = [];
             let prev_line = "";
