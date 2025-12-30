@@ -49,6 +49,7 @@ check_wgetcurl(){
 
 function download_core() {
     um="$(uname -m)"
+    OPENWRT_ARCH="$(awk -F'=' '/^OPENWRT_ARCH=/{gsub(/"/,"",$2); split($2,a,"_"); print a[1]}' /etc/os-release)"
     case "$um" in
         i386|i686)     Arch="386" ;;
         x86_64)        Arch="amd64" ;;
@@ -56,10 +57,15 @@ function download_core() {
         armv5*)        Arch="armv5" ;;
         armv6*)        Arch="armv6" ;;
         armv7*|armv8l) Arch="armv7" ;;
-        mips64el)      Arch="mips64le" ;;
-        mips64)        Arch="mips64" ;;
-        mipsel)        Arch="mipsle" ;;
-        mips)          Arch="mips" ;;
+        mips*)
+            case "$OPENWRT_ARCH" in
+                mips64el) Arch="mips64le" ;;   # 64‑bit little‑endian
+                mips64)   Arch="mips64"   ;;   # 64‑bit big‑endian
+                mipsel)   Arch="mipsle"   ;;   # 32‑bit little‑endian
+                mips)     Arch="mips"     ;;   # 32‑bit big‑endian
+                *) echo "Error: unknown OpenWrt MIPS flavour '$OPENWRT_ARCH'"; exit 1 ;;
+            esac
+            ;;
         *) echo "Error: $um is not supported"; exit 1 ;;
     esac
 
