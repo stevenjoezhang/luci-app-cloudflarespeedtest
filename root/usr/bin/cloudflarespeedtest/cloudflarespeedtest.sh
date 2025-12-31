@@ -80,15 +80,24 @@ function download_core() {
         exit 1
     fi
 
-    if [ "${link##*.}" == "gz" ]; then
-        tar -zxf "/tmp/${link##*/}" -C "/tmp/"
+    # Decompress .tar.gz to .tar, run lua patch on the .tar, then extract the .tar
+    gzfile="/tmp/${link##*/}"
+    tarfile="${gzfile%.gz}"
+
+    # If we have a .gz file, decompress it to produce a .tar
+    if [ "${gzfile##*.}" = "gz" ] && [ -f "$gzfile" ]; then
+        gzip -d "$gzfile" || (echo "Failed to decompress $gzfile" && exit 1)
+    fi
+
+    # If original was gz (now we have a .tar), run patch.lua on the tar then extract it
+    if [ "${gzfile##*.}" = "gz" ]; then
+        lua /usr/bin/cloudflarespeedtest/patch.lua "$tarfile"
+        tar -xf "$tarfile" -C "/tmp/"
         if [ ! -e "/tmp/cfst" ]; then
             echo "Failed to extract core from archive."
             exit 1
         fi
         downloadbin="/tmp/cfst"
-    else
-        downloadbin="/tmp/${link##*/}"
     fi
 
     echo "Download success. Start copy."
