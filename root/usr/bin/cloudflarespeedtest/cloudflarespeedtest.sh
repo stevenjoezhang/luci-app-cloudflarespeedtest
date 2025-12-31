@@ -39,12 +39,13 @@ function appinit(){
 }
 
 check_wgetcurl(){
+    echo "Checking for curl or wget..."
     which curl && downloader="curl -L -k --retry 2 --connect-timeout 20 -o" && return
     which wget-ssl && downloader="wget-ssl --no-check-certificate -t 2 -T 20 -O" && return
-    [ -z "$1" ] && opkg update || (echo error opkg && EXIT 1)
+    [ -z "$1" ] && opkg update || (echo "Failed to run opkg update" && exit 1)
     [ -z "$1" ] && (opkg remove wget wget-nossl --force-depends ; opkg install wget ; check_wgetcurl 1 ;return)
     [ "$1" == "1" ] && (opkg install curl ; check_wgetcurl 2 ; return)
-    echo error curl and wget && EXIT 1
+    echo "Error: curl and wget not found" && exit 1
 }
 
 function download_core() {
@@ -69,20 +70,20 @@ function download_core() {
         *) echo "Error: $um is not supported"; exit 1 ;;
     esac
 
-    echo -e "start download"
+    echo "Start download..."
     link="https://github.com/XIU2/CloudflareSpeedTest/releases/download/v2.3.4/cfst_linux_$Arch.tar.gz"
     check_wgetcurl
 
     $downloader /tmp/${link##*/} "$link" 2>&1
     if [ "$?" != "0" ]; then
-        echo "download failed"
+        echo "Download failed"
         exit 1
     fi
 
     if [ "${link##*.}" == "gz" ]; then
         tar -zxf "/tmp/${link##*/}" -C "/tmp/"
         if [ ! -e "/tmp/cfst" ]; then
-            echo -e "Failed to download core."
+            echo "Failed to extract core from archive."
             exit 1
         fi
         downloadbin="/tmp/cfst"
@@ -90,7 +91,7 @@ function download_core() {
         downloadbin="/tmp/${link##*/}"
     fi
 
-    echo -e "download success start copy"
+    echo "Download success. Start copy."
     mv -f "$downloadbin" /usr/bin/cdnspeedtest
 }
 
