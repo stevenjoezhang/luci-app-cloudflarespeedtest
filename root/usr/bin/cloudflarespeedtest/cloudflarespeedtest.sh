@@ -39,9 +39,9 @@ function appinit(){
 }
 
 check_wgetcurl(){
-    echo "Checking for curl or wget..."
+    echo "Checking for wget or curl..."
+    which wget && downloader="wget --no-check-certificate -T 20 -O" && return
     which curl && downloader="curl -L -k --retry 2 --connect-timeout 20 -o" && return
-    which wget-ssl && downloader="wget-ssl --no-check-certificate -t 2 -T 20 -O" && return
     [ -z "$1" ] && opkg update || (echo "Failed to run opkg update" && exit 1)
     [ -z "$1" ] && (opkg remove wget wget-nossl --force-depends ; opkg install wget ; check_wgetcurl 1 ;return)
     [ "$1" == "1" ] && (opkg install curl ; check_wgetcurl 2 ; return)
