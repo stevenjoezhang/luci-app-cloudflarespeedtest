@@ -28,14 +28,14 @@ function act_status()
 	local e = {}
 	local uci = require "luci.model.uci".cursor()
 	local cron = uci:get("cloudflarespeedtest", "global", "enabled") or "0"
-	e.running = luci.sys.call("busybox ps -w | grep cdnspeedtest | grep -v grep >/dev/null") == 0
+	e.running = luci.sys.call("pgrep cdnspeedtest >/dev/null") == 0
 	e.cron = cron == "1"
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(e)
 end
 
 function act_stop()
- 	luci.sys.call("busybox ps -w | grep cdnspeedtest | grep -v grep | xargs kill -9 >/dev/null")
+	luci.sys.call("pgrep cdnspeedtest | xargs kill -9 >/dev/null 2>&1")
 	luci.http.prepare_content("application/json")
 	luci.http.write("{}")
 end
