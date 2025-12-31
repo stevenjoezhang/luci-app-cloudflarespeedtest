@@ -225,7 +225,7 @@ function speed_test(){
         fi
     fi
 
-    echo $command  >> $LOG_FILE 2>&1
+    echo $command >> $LOG_FILE 2>&1
     echolog "-----------start----------"
     $command >> $LOG_FILE 2>&1
     echolog "-----------end------------"

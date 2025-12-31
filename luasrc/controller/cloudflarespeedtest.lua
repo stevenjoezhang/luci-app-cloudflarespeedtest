@@ -49,9 +49,26 @@ end
 
 function get_log()
 	local fs = require "nixio.fs"
-	local log_content = fs.readfile("/tmp/cloudflarespeedtest.log") or ""
-	log_content = log_content:gsub("%[[^%]]*%]", "\n")
-	luci.http.write(log_content)
+	local fpath = "/tmp/cloudflarespeedtest.log"
+	local pos = tonumber(luci.http.formvalue("pos")) or 0
+	local content = ""
+	local newpos = pos
+
+	if fs.access(fpath) then
+		local fh = io.open(fpath, "r")
+		if fh then
+			fh:seek("set", pos)
+			local raw = fh:read(1048576) or ""
+			newpos = fh:seek()
+			fh:close()
+
+			-- apply existing filtering logic on the chunk
+			content = raw:gsub("%[[^%]]*%]", "\n")
+		end
+	end
+
+	luci.http.prepare_content("application/json")
+	luci.http.write_json({ pos = newpos, content = content })
 end
 
 function get_history()

@@ -5,20 +5,32 @@
 <script type="text/javascript">
     const LOG_URL = '<%=luci.dispatcher.build_url("admin", "services", "cloudflarespeedtest","getlog")%>';
 
+    var logPos = 0;
+
     function getlog(){
-        XHR.get(LOG_URL, null, function(x, data) {
-            // 移除方括号内容并去除连续重复行
-            let log_content = x.responseText || "";
-            let lines = log_content.split(/\r?\n/);
-            let filtered_lines = [];
-            let prev_line = "";
-            for (let line of lines) {
+        XHR.get(LOG_URL + '?pos=' + encodeURIComponent(logPos), null, function(x, data) {
+            // data is parsed JSON: { pos, content }
+            var log_content = (data && data.content) || "";
+            var lines = log_content.split(/\r?\n/);
+            var filtered_lines = [];
+            var prev_line = "";
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i];
                 if (line !== prev_line) {
                     filtered_lines.push(line);
                     prev_line = line;
                 }
             }
-            logview.value = filtered_lines.join("\n");
+            if (filtered_lines.length > 0) {
+                // append to existing text area content
+                var lv = document.getElementById('logview');
+                lv.value += filtered_lines.join("\n");
+            }
+
+            if (data && data.pos !== undefined && data.pos !== null) {
+                logPos = parseInt(data.pos, 10) || logPos;
+            }
+
             if(document.getElementById("checkbox1").checked == true){
                 logview.scrollTop = logview.scrollHeight;
             }
