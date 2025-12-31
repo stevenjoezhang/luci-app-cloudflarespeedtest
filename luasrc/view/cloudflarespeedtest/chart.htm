@@ -1,21 +1,39 @@
 <style>
   .chart-container {
+    --card-bg: #f8f8f8;
+    --text-color: #222;
+    --card-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .chart-container {
+      --card-bg: #282828;
+      --text-color: #e6eef6;
+      --card-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    }
+  }
+
+  .chart-container {
     width: 100%;
     margin: 20px auto;
-    background: #fff;
+    background: var(--card-bg);
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    box-shadow: var(--card-shadow);
+    color: var(--text-color);
   }
+
   .chart-row {
     display: flex;
     gap: 30px;
   }
+
   @media (max-width: 767px) {
     .chart-row {
       flex-direction: column;
     }
   }
+
   .chart-container canvas {
     display: block;
     width: 100%;
