@@ -25,14 +25,11 @@
                 // append to existing text area content
                 var lv = document.getElementById('logview');
                 lv.value += filtered_lines.join("\n");
+                lv.scrollTop = lv.scrollHeight;
             }
 
             if (data && data.pos !== undefined && data.pos !== null) {
                 logPos = parseInt(data.pos, 10) || logPos;
-            }
-
-            if(document.getElementById("checkbox1").checked == true){
-                logview.scrollTop = logview.scrollHeight;
             }
         });
     }
