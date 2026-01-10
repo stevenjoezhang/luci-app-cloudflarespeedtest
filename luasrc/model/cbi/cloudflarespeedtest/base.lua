@@ -78,40 +78,48 @@ o = s:taboption("advanced", Value, "threads", translate("Thread Count"))
 o.datatype ="uinteger"
 o.default = 200
 o.rmempty=true
+o:depends("advanced", 1)
 
 o = s:taboption("advanced", Value, "tl", translate("Average latency cap"))
 o.datatype ="uinteger"
 o.default = 200
 o.rmempty=true
+o:depends("advanced", 1)
 
 o = s:taboption("advanced", Value, "tll", translate("Average latency lower bound"))
 o.datatype ="uinteger"
 o.default = 40
 o.rmempty=true
+o:depends("advanced", 1)
 
 o = s:taboption("advanced", Value, "t", translate("Delayed speed measurement time"))
 o.datatype ="uinteger"
 o.default = 4
 o.rmempty=true
+o:depends("advanced", 1)
 
 o = s:taboption("advanced", Value, "dt", translate("Download speed test time"))
 o.datatype ="uinteger"
 o.default = 10
 o.rmempty=true
+o:depends("advanced", 1)
 
 o = s:taboption("advanced", Value, "dn", translate("Number of download speed tests"))
 o.datatype ="uinteger"
 o.default = 5
 o.rmempty=true
+o:depends("advanced", 1)
 
 o = s:taboption("advanced", Flag, "dd", translate("Disable download speed test"))
 o.default = 0
 o.rmempty=true
+o:depends("advanced", 1)
 
 o = s:taboption("advanced", Value, "tp", translate("Port"))
 o.rmempty=true
 o.default = 443
 o.datatype ="port"
+o:depends("advanced", 1)
 
 s=m:section(TypedSection, "global")
 s.title = translate("Best IP")
