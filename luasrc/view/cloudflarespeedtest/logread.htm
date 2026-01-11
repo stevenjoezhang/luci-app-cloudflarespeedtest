@@ -5,15 +5,15 @@
 <script type="text/javascript">
     const LOG_URL = '<%=luci.dispatcher.build_url("admin", "services", "cloudflarespeedtest","getlog")%>';
 
-    var logPos = 0;
+    let logPos = 0;
 
-    function getlog(){
+    function getlog() {
         XHR.get(LOG_URL + '?pos=' + encodeURIComponent(logPos), null, function(x, data) {
             // data is parsed JSON: { pos, content }
-            var log_content = (data && data.content) || "";
+            const log_content = (data && data.content) || "";
             if (log_content.length > 0) {
                 // append to existing text area content
-                var lv = document.getElementById('logview');
+                const lv = document.getElementById('logview');
                 lv.value += log_content;
                 lv.scrollTop = lv.scrollHeight;
             }
@@ -23,11 +23,9 @@
             }
         });
     }
-    getlog()
+    getlog();
     setInterval(() => {
-        if(document.getElementById("checkbox1").checked == true){
-            getlog()
-        }
+        if (document.getElementById("checkbox1").checked) getlog();
     }, 5000);
 </script>
 <%+cbi/valuefooter%>
