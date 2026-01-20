@@ -215,6 +215,10 @@ o:depends("HOST_enabled", 1)
 
 s:tab("mosdns", translate("MosDNS"))
 o=s:taboption("mosdns", Flag, "MosDNS_enabled",translate("MosDNS Enabled"))
+o=s:taboption("mosdns", Value, "MosDNS_ip_count",translate("MosDNS IP Count"))
+o.datatype ="uinteger"
+o.default = 1
+o:depends("MosDNS_enabled", 1)
 o=s:taboption("mosdns", Flag, "openclash_restart",translate("OpenClash Restart"))
 o:depends("MosDNS_enabled", 1)
 

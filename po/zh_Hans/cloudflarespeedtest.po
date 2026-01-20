@@ -244,5 +244,8 @@ msgstr "域名"
 msgid "MosDNS Enabled"
 msgstr "写入 MosDNS"
 
+msgid "MosDNS IP Count"
+msgstr "MosDNS IP 数量"
+
 msgid "OpenClash Restart"
 msgstr "重启 OpenClash"

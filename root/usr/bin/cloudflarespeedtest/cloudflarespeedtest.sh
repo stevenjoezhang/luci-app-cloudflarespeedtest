@@ -27,7 +27,7 @@ echolog() {
 
 function read_config(){
     get_global_config "enabled" "speed_limit" "custom_url" "threads" "custom_cron_enabled" "custom_cron" "t" "tp" "dt" "dn" "dd" "tl" "tll" "ipv6_enabled" "advanced" "proxy_mode"
-    get_servers_config "ssr_services" "ssr_enabled" "passwall_enabled" "passwall_services" "passwall2_enabled" "passwall2_services" "bypass_enabled" "bypass_services" "vssr_enabled" "vssr_services" "DNS_enabled" "HOST_enabled" "MosDNS_enabled" "openclash_restart"
+    get_servers_config "ssr_services" "ssr_enabled" "passwall_enabled" "passwall_services" "passwall2_enabled" "passwall2_services" "bypass_enabled" "bypass_services" "vssr_enabled" "vssr_services" "DNS_enabled" "HOST_enabled" "MosDNS_enabled" "MosDNS_ip_count" "openclash_restart"
 }
 
 function appinit(){
@@ -284,6 +284,19 @@ function host_ip() {
 
 function mosdns_ip() {
     if [ "x${MosDNS_enabled}" == "x1" ] ;then
+        # 默认只取1个，除非配置了 MosDNS_ip_count
+        count=1
+        if [ -n "$MosDNS_ip_count" ] && [ "$MosDNS_ip_count" -gt 1 ]; then
+            count=$MosDNS_ip_count
+        fi
+
+        # 获取前 count 个 IP，注意结果文件的第一行通常是标题，所以从第2行开始取
+        # sed -n "2,$((count + 1))p" 取第2行到第 count+1 行
+        # grep -v '^#' 排除注释行（如末尾的时间戳）
+        # awk -F, '{print $1}' 提取第一列 IP
+        # tr '\n' ' ' 将多行转为空格分隔的一行
+        bestips=$(sed -n "2,$((count + 1))p" $IP_FILE | grep -v '^#' | awk -F, '{print $1}' | tr '\n' ' ')
+
         if [ -n "$(grep 'option cloudflare' /etc/config/mosdns)" ]
         then
             sed -i".bak" "/option cloudflare/d" /etc/config/mosdns
@@ -292,13 +305,22 @@ function mosdns_ip() {
         then
             sed -i".bak" "/list cloudflare_ip/d" /etc/config/mosdns
         fi
-        sed -i '/^$/d' /etc/config/mosdns && echo -e "\toption cloudflare '1'\n\tlist cloudflare_ip '$bestip'" >> /etc/config/mosdns
+
+        # 写入 option cloudflare '1'
+        sed -i '/^$/d' /etc/config/mosdns && echo -e "\toption cloudflare '1'" >> /etc/config/mosdns
+
+        # 循环写入所有 IP
+        for ip in $bestips; do
+            if [ -n "$ip" ]; then
+                 echo -e "\tlist cloudflare_ip '$ip'" >> /etc/config/mosdns
+            fi
+        done
 
         /etc/init.d/mosdns restart &>/dev/null
         if [ "x${openclash_restart}" == "x1" ] ;then
             /etc/init.d/openclash restart &>/dev/null
         fi
-        echolog "MosDNS 写入完成"
+        echolog "MosDNS 写入完成，已写入IP: $bestips"
     fi
 }
 
