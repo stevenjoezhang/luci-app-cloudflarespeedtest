@@ -177,6 +177,12 @@ if nixio.fs.access("/etc/config/vssr") then
 
 end
 
+s:tab("dnshost", translate("HOST"))
+o=s:taboption("dnshost", Flag, "HOST_enabled",translate("HOST Enabled"))
+o=s:taboption("dnshost", Value,"host_domain",translate("Domain"))
+o.rmempty=true
+o:depends("HOST_enabled", 1)
+
 s:tab("dnstab", translate("DNS"))
 
 o=s:taboption("dnstab", Flag, "DNS_enabled",translate("DNS Enabled"))
@@ -206,12 +212,6 @@ o:value("unicom", translate("unicom"))
 o:value("mobile", translate("mobile"))
 o:depends("DNS_enabled", 1)
 o.default ="telecom"
-
-s:tab("dnshost", translate("HOST"))
-o=s:taboption("dnshost", Flag, "HOST_enabled",translate("HOST Enabled"))
-o=s:taboption("dnshost", Value,"host_domain",translate("Domain"))
-o.rmempty=true
-o:depends("HOST_enabled", 1)
 
 s:tab("mosdns", translate("MosDNS"))
 o=s:taboption("mosdns", Flag, "MosDNS_enabled",translate("MosDNS Enabled"))
