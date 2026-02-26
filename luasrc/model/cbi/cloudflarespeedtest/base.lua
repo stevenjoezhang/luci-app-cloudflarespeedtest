@@ -32,7 +32,12 @@ o.rmempty=false
 o=s:taboption("basic", Value,"custom_url",translate("Custom URL"))
 o.description = translate("<a href=\"https://github.com/XIU2/CloudflareSpeedTest/issues/168\" target=\"_blank\">How to create</a>")
 o.rmempty=false
-o.default = "https://speed.cloudflare.com/__down?bytes=300000000"
+o.default = "https://speed.cloudflare.com/__down?bytes=99000000"
+o:value("https://speed.cloudflare.com/__down?bytes=99000000", "speed.cloudflare.com (99M Max)")
+o:value("https://download.parallels.com/desktop/v15/15.1.5-47309/ParallelsDesktop-15.1.5-47309.dmg", "Parallels Desktop v15")
+o:value("https://download.parallels.com/desktop/v17/17.1.1-51537/ParallelsDesktop-17.1.1-51537.dmg", "Parallels Desktop v17")
+o:value("https://t1.geigei.gq", "t1.geigei.gq")
+o:value("https://t2.geigei.gq", "t2.geigei.gq")
 
 o = s:taboption("basic", ListValue, "proxy_mode", translate("Proxy mode"))
 o.description = translate("Switch to the selected proxy mode during the speed test")
