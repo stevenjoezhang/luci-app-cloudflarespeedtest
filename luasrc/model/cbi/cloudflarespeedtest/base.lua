@@ -36,6 +36,7 @@ o.default = "https://speed.cloudflare.com/__down?bytes=99000000"
 o:value("https://speed.cloudflare.com/__down?bytes=99000000", "speed.cloudflare.com (99M Max)")
 o:value("https://download.parallels.com/desktop/v15/15.1.5-47309/ParallelsDesktop-15.1.5-47309.dmg", "Parallels Desktop v15")
 o:value("https://download.parallels.com/desktop/v17/17.1.1-51537/ParallelsDesktop-17.1.1-51537.dmg", "Parallels Desktop v17")
+o:value("https://w.7rs.net/speedtest/200mb.test", "w.7rs.net (200M)")
 o:value("https://t1.geigei.gq", "t1.geigei.gq")
 o:value("https://t2.geigei.gq", "t2.geigei.gq")
 
