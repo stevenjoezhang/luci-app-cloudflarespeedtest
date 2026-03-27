@@ -36,6 +36,67 @@ function appinit(){
     passwall2_started='';
     bypass_started='';
     vssr_started='';
+    homeproxy_started='';
+}
+
+function homeproxy_client_active() {
+    local routing_mode outbound_node
+
+    routing_mode="$(uci get homeproxy.config.routing_mode 2>/dev/null)"
+    if [ "x${routing_mode}" = "xcustom" ] ;then
+        outbound_node="$(uci get homeproxy.routing.default_outbound 2>/dev/null)"
+    else
+        outbound_node="$(uci get homeproxy.config.main_node 2>/dev/null)"
+    fi
+
+    [ "x${outbound_node}" != "x" ] && [ "x${outbound_node}" != "xnil" ]
+}
+
+function prepare_homeproxy() {
+    [ -f /etc/config/homeproxy ] || return 0
+    homeproxy_client_active || return 0
+
+    homeproxy_original_routing_mode="$(uci get homeproxy.config.routing_mode 2>/dev/null)"
+    homeproxy_original_main_node="$(uci get homeproxy.config.main_node 2>/dev/null)"
+    homeproxy_original_main_udp_node="$(uci get homeproxy.config.main_udp_node 2>/dev/null)"
+    homeproxy_original_default_outbound="$(uci get homeproxy.routing.default_outbound 2>/dev/null)"
+
+    if [ $proxy_mode == "close" ] ;then
+        if [ "x${homeproxy_original_routing_mode}" = "xcustom" ] ;then
+            uci set homeproxy.routing.default_outbound="nil"
+        else
+            uci set homeproxy.config.main_node="nil"
+            uci set homeproxy.config.main_udp_node="nil"
+        fi
+    elif [ $proxy_mode == "gfw" ] ;then
+        if [ "x${homeproxy_original_routing_mode}" = "xcustom" ] ;then
+            echolog "HomeProxy 当前为自定义路由，测速期间临时停用客户端代理"
+            uci set homeproxy.routing.default_outbound="nil"
+        else
+            uci set homeproxy.config.routing_mode="gfwlist"
+        fi
+    else
+        return 0
+    fi
+
+    homeproxy_started='1'
+    uci commit homeproxy
+    /etc/init.d/homeproxy restart 2>/dev/null
+}
+
+function restore_homeproxy() {
+    if [ "x${homeproxy_started}" != "x1" ] ;then
+        return 0
+    fi
+
+    [ -n "$homeproxy_original_routing_mode" ] && uci set homeproxy.config.routing_mode="${homeproxy_original_routing_mode}"
+    [ -n "$homeproxy_original_main_node" ] && uci set homeproxy.config.main_node="${homeproxy_original_main_node}"
+    [ -n "$homeproxy_original_main_udp_node" ] && uci set homeproxy.config.main_udp_node="${homeproxy_original_main_udp_node}"
+    [ -n "$homeproxy_original_default_outbound" ] && uci set homeproxy.routing.default_outbound="${homeproxy_original_default_outbound}"
+
+    uci commit homeproxy
+    /etc/init.d/homeproxy restart 2>/dev/null
+    echolog "HomeProxy 重启完成"
 }
 
 check_wgetcurl(){
@@ -235,6 +296,8 @@ function speed_test(){
         fi
     fi
 
+    prepare_homeproxy
+
     echo $command >> $LOG_FILE 2>&1
     echolog "-----------start----------"
     $command >> $LOG_FILE 2>&1
@@ -258,9 +321,10 @@ function ip_replace(){
         bypass_best_ip
         passwall_best_ip
         passwall2_best_ip
-        restart_app
 
     fi
+
+    restart_app
 }
 
 function host_ip() {
@@ -440,6 +504,8 @@ function restart_app(){
         /etc/init.d/bypass restart &>/dev/null
         echolog "Bypass重启完成"
     fi
+
+    restore_homeproxy
 }
 
 function alidns_ip(){
