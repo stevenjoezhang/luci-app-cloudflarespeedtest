@@ -190,6 +190,24 @@ msgstr "关闭"
 msgid "Switch to the selected proxy mode during the speed test"
 msgstr "在速度测试时切换到选定的代理模式"
 
+msgid "GitHub Mirror"
+msgstr "GitHub 镜像"
+
+msgid "Only used when downloading the CloudflareSpeedTest core from GitHub releases"
+msgstr "仅在从 GitHub Releases 下载 CloudflareSpeedTest 核心时使用"
+
+msgid "Direct"
+msgstr "直连"
+
+msgid "Custom"
+msgstr "自定义"
+
+msgid "Custom GitHub Mirror"
+msgstr "自定义 GitHub 镜像"
+
+msgid "Enter a GitHub mirror prefix, for example: https://ghfast.top/"
+msgstr "填写 GitHub 镜像前缀，例如：https://ghfast.top/"
+
 msgid "DNS"
 msgstr "DNS"
 

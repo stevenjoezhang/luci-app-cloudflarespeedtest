@@ -26,7 +26,7 @@ echolog() {
 }
 
 function read_config(){
-    get_global_config "enabled" "speed_limit" "custom_url" "threads" "custom_cron_enabled" "custom_cron" "t" "tp" "dt" "dn" "dd" "tl" "tll" "ipv6_enabled" "advanced" "proxy_mode"
+    get_global_config "enabled" "speed_limit" "custom_url" "threads" "custom_cron_enabled" "custom_cron" "t" "tp" "dt" "dn" "dd" "tl" "tll" "ipv6_enabled" "advanced" "proxy_mode" "github_proxy" "github_proxy_custom"
     get_servers_config "ssr_services" "ssr_enabled" "passwall_enabled" "passwall_services" "passwall2_enabled" "passwall2_services" "bypass_enabled" "bypass_services" "vssr_enabled" "vssr_services" "DNS_enabled" "HOST_enabled" "MosDNS_enabled" "MosDNS_ip_count" "openclash_restart"
 }
 
@@ -109,6 +109,28 @@ check_wgetcurl(){
     echo "Error: curl and wget not found" && exit 1
 }
 
+function get_github_mirror_prefix() {
+    case "$github_proxy" in
+        ghfast)
+            echo "https://ghfast.top/"
+            ;;
+        ghproxy)
+            echo "https://ghproxy.cc/"
+            ;;
+        custom)
+            if [ -n "$github_proxy_custom" ] ;then
+                case "$github_proxy_custom" in
+                    */) echo "$github_proxy_custom" ;;
+                    *) echo "${github_proxy_custom}/" ;;
+                esac
+            fi
+            ;;
+        *)
+            echo ""
+            ;;
+    esac
+}
+
 function download_core() {
     um="$(uname -m)"
     OPENWRT_ARCH="$(awk -F'=' '/^OPENWRT_ARCH=/{gsub(/"/,"",$2); split($2,a,"_"); print a[1]}' /etc/os-release)"
@@ -132,7 +154,15 @@ function download_core() {
     esac
 
     echo "Start download..."
-    link="https://github.com/XIU2/CloudflareSpeedTest/releases/download/v2.3.4/cfst_linux_$Arch.tar.gz"
+    raw_link="https://github.com/XIU2/CloudflareSpeedTest/releases/download/v2.3.4/cfst_linux_$Arch.tar.gz"
+    github_mirror_prefix="$(get_github_mirror_prefix)"
+    if [ -n "$github_mirror_prefix" ] ;then
+        link="${github_mirror_prefix}${raw_link}"
+    else
+        link="${raw_link}"
+    fi
+
+    echolog "Core download URL: $link"
     check_wgetcurl
 
     $downloader /tmp/${link##*/} "$link" 2>&1

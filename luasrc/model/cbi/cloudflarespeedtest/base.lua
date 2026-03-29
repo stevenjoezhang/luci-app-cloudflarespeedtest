@@ -47,6 +47,19 @@ o:value("gfw", translate("GFW List"))
 o:value("close", translate("CLOSE"))
 o.default = "gfw"
 
+o = s:taboption("basic", ListValue, "github_proxy", translate("GitHub Mirror"))
+o.description = translate("Only used when downloading the CloudflareSpeedTest core from GitHub releases")
+o:value("direct", translate("Direct"))
+o:value("ghfast", "ghfast.top")
+o:value("ghproxy", "ghproxy.cc")
+o:value("custom", translate("Custom"))
+o.default = "direct"
+
+o = s:taboption("basic", Value, "github_proxy_custom", translate("Custom GitHub Mirror"))
+o.description = translate("Enter a GitHub mirror prefix, for example: https://ghfast.top/")
+o:depends("github_proxy", "custom")
+o.rmempty = true
+
 -- [[ Cron设置 ]]--
 
 s:tab("cron", translate("Crontab Settings"))

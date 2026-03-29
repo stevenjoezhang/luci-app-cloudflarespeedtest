@@ -8,6 +8,8 @@ config global 'global'
 	option custom_url 'https://speed.cloudflare.com/__down?bytes=300000000'
 	option threads '200'
 	option speed_limit '10'
+	option github_proxy 'direct'
+	option github_proxy_custom ''
 
 config servers 'servers'
 	option ssr_enabled '0'
