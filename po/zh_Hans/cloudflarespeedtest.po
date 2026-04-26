@@ -145,6 +145,12 @@ msgstr "禁用下载测速"
 msgid "Port"
 msgstr "端口"
 
+msgid "Latency test with HTTP"
+msgstr "延迟测速模式改为 HTTP 协议"
+
+msgid "Match the specified area"
+msgstr "匹配指定地区 colo 码"
+
 msgid "Not recommended"
 msgstr "不推荐"
 

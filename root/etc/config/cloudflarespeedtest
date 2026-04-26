@@ -10,6 +10,8 @@ config global 'global'
 	option speed_limit '10'
 	option github_proxy 'direct'
 	option github_proxy_custom ''
+	option httping '0'
+	option cfcolo ''
 
 config servers 'servers'
 	option ssr_enabled '0'
