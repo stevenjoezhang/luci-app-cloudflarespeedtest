@@ -240,9 +240,9 @@ function speed_test(){
         if [ $tp -ne "443" ] ; then
             command="${command} -tp ${tp}"
         fi
-        if [ $httping -eq "1" ] ; then
+        if [ "${httping:-0}" -eq "1" ] ; then
             command="${command} -httping"
-            if [ "$cfcolo" != "" ] ; then
+            if [ -n "${cfcolo:-}" ] ; then
                 command="${command} -cfcolo ${cfcolo}"
             fi
         fi

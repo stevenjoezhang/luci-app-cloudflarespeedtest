@@ -140,12 +140,12 @@ o.default = 443
 o.datatype ="port"
 o:depends("advanced", 1)
 
-o = s:taboption("advanced", Flag, "httping", translate("Latency test with HTTP"))
+o = s:taboption("advanced", Flag, "httping", translate("Use HTTP for latency test"))
 o.default = 0
 o.rmempty=true
 o:depends("advanced", 1)
 
-o = s:taboption("advanced", Value, "cfcolo", translate("Match the specified area colo code"))
+o = s:taboption("advanced", Value, "cfcolo", translate("Cloudflare colo code"))
 o.default = ""
 o.datatype ="string"
 o.rmempty=true
