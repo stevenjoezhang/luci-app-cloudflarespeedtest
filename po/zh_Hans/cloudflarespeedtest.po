@@ -145,6 +145,12 @@ msgstr "禁用下载测速"
 msgid "Port"
 msgstr "端口"
 
+msgid "Use HTTP for latency test"
+msgstr "使用 HTTP 测试延迟"
+
+msgid "Cloudflare colo code"
+msgstr "Cloudflare 机房 colo 代码"
+
 msgid "Not recommended"
 msgstr "不推荐"
 

@@ -26,7 +26,7 @@ echolog() {
 }
 
 function read_config(){
-    get_global_config "enabled" "speed_limit" "custom_url" "threads" "custom_cron_enabled" "custom_cron" "t" "tp" "dt" "dn" "dd" "tl" "tll" "ipv6_enabled" "advanced" "proxy_mode" "github_proxy" "github_proxy_custom"
+    get_global_config "enabled" "speed_limit" "custom_url" "threads" "custom_cron_enabled" "custom_cron" "t" "tp" "dt" "dn" "dd" "tl" "tll" "ipv6_enabled" "advanced" "proxy_mode" "github_proxy" "github_proxy_custom" "httping" "cfcolo"
     get_servers_config "ssr_services" "ssr_enabled" "passwall_enabled" "passwall_services" "passwall2_enabled" "passwall2_services" "bypass_enabled" "bypass_services" "vssr_enabled" "vssr_services" "DNS_enabled" "HOST_enabled" "MosDNS_enabled" "MosDNS_ip_count" "openclash_restart"
 }
 
@@ -239,6 +239,12 @@ function speed_test(){
         fi
         if [ $tp -ne "443" ] ; then
             command="${command} -tp ${tp}"
+        fi
+        if [ "${httping:-0}" -eq "1" ] ; then
+            command="${command} -httping"
+            if [ -n "${cfcolo:-}" ] ; then
+                command="${command} -cfcolo ${cfcolo}"
+            fi
         fi
     else
         # Default param: -tl 200 -tll 40 -n 200 -t 4 -dt 10
