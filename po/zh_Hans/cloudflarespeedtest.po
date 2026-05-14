@@ -17,8 +17,8 @@ msgstr "<a href=\"https://github.com/stevenjoezhang/luci-app-cloudflarespeedtest
 msgid "Cloudflare Speed Test"
 msgstr "Cloudflare 速度测试"
 
-msgid "Schedules and runs CloudflareSpeedTest, automatically selecting and applying the fastest Cloudflare IPs to outbound proxy setups"
-msgstr "定时运行 CloudflareSpeedTest，并自动选择和应用最快的 Cloudflare IP 到出站代理设置中"
+msgid "Schedules and runs CloudflareSpeedTest with the selected IP list, automatically applying the fastest IPs to supported integrations"
+msgstr "使用所选 IP 列表定时运行 CloudflareSpeedTest，并自动将最快 IP 应用到支持的集成"
 
 msgid "Plugin Settings"
 msgstr "插件设置"
@@ -35,14 +35,14 @@ msgstr "计划任务设置"
 msgid "Logs"
 msgstr "日志"
 
-msgid "Test the speed of Cloudflare IP and apply the best IP to the system"
-msgstr "测试 Cloudflare IP 的速度，并将最佳 IP 应用到系统"
+msgid "Test latency and speed for all IPs in the selected CDN or website list, then apply the fastest IP (IPv4 + IPv6 supported)"
+msgstr "测试所选 CDN 或网站列表中所有 IP 的延迟和速度，并应用最快 IP（支持 IPv4 + IPv6）"
 
 msgid "Enabled"
 msgstr "启用"
 
-msgid "Enabled scheduled task to test Cloudflare IP"
-msgstr "启用计划任务测试 Cloudflare IP"
+msgid "Enable scheduled task to test the selected IP list"
+msgstr "启用计划任务测试所选 IP 列表"
 
 msgid "Speed threshold (MB/s)"
 msgstr "速度阈值（MB/s）"
@@ -127,8 +127,26 @@ msgstr "平均延迟上限"
 msgid "Average latency lower bound"
 msgstr "平均延迟下限"
 
-msgid "Enable IPv6"
-msgstr "启用 IPv6"
+msgid "IP list source"
+msgstr "IP 列表来源"
+
+msgid "Select the IP list used by CloudflareSpeedTest"
+msgstr "选择 CloudflareSpeedTest 使用的 IP 列表"
+
+msgid "Built-in IPv4 list"
+msgstr "内置 IPv4 列表"
+
+msgid "Built-in IPv6 list"
+msgstr "内置 IPv6 列表"
+
+msgid "Custom file"
+msgstr "自定义文件"
+
+msgid "Custom IP list file"
+msgstr "自定义 IP 列表文件"
+
+msgid "Enter a local file path, for example: /etc/cloudflarespeedtest/ip.txt"
+msgstr "输入本地文件路径，例如：/etc/cloudflarespeedtest/ip.txt"
 
 msgid "Delayed speed measurement time"
 msgstr "延迟测速次数"
@@ -153,9 +171,6 @@ msgstr "Cloudflare 机房 colo 代码"
 
 msgid "Not recommended"
 msgstr "不推荐"
-
-msgid "Only one protocol can be tested. If IPv6 is enabled, IPv4 will not be tested."
-msgstr "IPv4 和 IPv6 只能选一个！！！！！！"
 
 msgid "<a href=\"https://github.com/XIU2/CloudflareSpeedTest/issues/168\" target=\"_blank\">How to create</a>"
 msgstr "<a href=\"https://github.com/XIU2/CloudflareSpeedTest/issues/168\" target=\"_blank\">如何创建</a>"
@@ -188,7 +203,7 @@ msgid "HOLD"
 msgstr "保持"
 
 msgid "GFW List"
-msgid "GFW 列表"
+msgstr "GFW 列表"
 
 msgid "CLOSE"
 msgstr "关闭"

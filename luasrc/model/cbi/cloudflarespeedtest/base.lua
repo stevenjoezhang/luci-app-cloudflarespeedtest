@@ -3,7 +3,7 @@ require("luci.sys")
 local uci = luci.model.uci.cursor()
 
 m = Map("cloudflarespeedtest", translate("Cloudflare Speed Test"))
-m.description = translate("Schedules and runs CloudflareSpeedTest, automatically selecting and applying the fastest Cloudflare IPs to outbound proxy setups").."<br/>"..translate("<a href=\"https://github.com/stevenjoezhang/luci-app-cloudflarespeedtest\" target=\"_blank\">⭐ Star on GitHub</a>")
+m.description = translate("Schedules and runs CloudflareSpeedTest with the selected IP list, automatically applying the fastest IPs to supported integrations").."<br/>"..translate("<a href=\"https://github.com/stevenjoezhang/luci-app-cloudflarespeedtest\" target=\"_blank\">⭐ Star on GitHub</a>")
 m:section(SimpleSection).template = "cloudflarespeedtest/status"
 
 s = m:section(TypedSection, "global")
@@ -17,12 +17,30 @@ s:tab("basic", translate("Basic Settings"))
 o = s:taboption("basic", Button,"speedtest",translate("Speed test"))
 o.inputtitle=translate("Start")
 o.template = "cloudflarespeedtest/actions"
-o.description = translate("Test the speed of Cloudflare IP and apply the best IP to the system")
+o.description = translate("Test latency and speed for all IPs in the selected CDN or website list, then apply the fastest IP (IPv4 + IPv6 supported)")
 
-o=s:taboption("basic", Flag,"ipv6_enabled",translate("Enable IPv6"))
-o.description = translate("Only one protocol can be tested. If IPv6 is enabled, IPv4 will not be tested.")
-o.default = 0
-o.rmempty=false
+o = s:taboption("basic", ListValue, "ip_source", translate("IP list source"))
+o.description = translate("Select the IP list used by CloudflareSpeedTest")
+o:value("builtin_ipv4", translate("Built-in IPv4 list"))
+o:value("builtin_ipv6", translate("Built-in IPv6 list"))
+o:value("custom_file", translate("Custom file"))
+o.default = "builtin_ipv4"
+o.rmempty = false
+function o.cfgvalue(self, section)
+	local value = uci:get("cloudflarespeedtest", section, "ip_source")
+	if value and value ~= "" then
+		return value
+	end
+	if uci:get("cloudflarespeedtest", section, "ipv6_enabled") == "1" then
+		return "builtin_ipv6"
+	end
+	return "builtin_ipv4"
+end
+
+o = s:taboption("basic", Value, "custom_ip_file", translate("Custom IP list file"))
+o.description = translate("Enter a local file path, for example: /etc/cloudflarespeedtest/ip.txt")
+o:depends("ip_source", "custom_file")
+o.rmempty = false
 
 o=s:taboption("basic", Value,"speed_limit",translate("Speed threshold (MB/s)"))
 o.description =translate("Only IPs with a download speed greater than this threshold will be retained. Please note, do not set this value too high — if no IP meets the requirement, CloudflareSpeedTest may waste excessive time and resources");
@@ -65,7 +83,7 @@ o.rmempty = true
 s:tab("cron", translate("Crontab Settings"))
 
 o=s:taboption("cron", Flag,"enabled",translate("Enabled"))
-o.description = translate("Enabled scheduled task to test Cloudflare IP")
+o.description = translate("Enable scheduled task to test the selected IP list")
 o.rmempty=false
 o.default = 0
 
