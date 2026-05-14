@@ -222,4 +222,18 @@ o:depends("MosDNS_enabled", 1)
 o=s:taboption("mosdns", Flag, "openclash_restart",translate("OpenClash Restart"))
 o:depends("MosDNS_enabled", 1)
 
+s:tab("astradns", translate("astra-dns"))
+o=s:taboption("astradns", Flag, "AstraDNS_enabled", translate("astra-dns Enabled"))
+o.rmempty=true
+
+o=s:taboption("astradns", Value, "AstraDNS_config", translate("astra-dns Config Path"))
+o.default="/etc/astra-dns/named.yaml"
+o.rmempty=true
+o:depends("AstraDNS_enabled", 1)
+
+o=s:taboption("astradns", Value, "AstraDNS_bin", translate("astra-dns Binary Path"))
+o.default="/usr/bin/astra-dns"
+o.rmempty=true
+o:depends("AstraDNS_enabled", 1)
+
 return m

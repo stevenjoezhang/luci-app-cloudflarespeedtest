@@ -12,7 +12,7 @@ This project is a fork of [mingxiaoyu/luci-app-cloudflarespeedtest](https://gith
 ## Features
 
 *   **Auto Speed Test**: Periodically or manually test Cloudflare IPs to find the best one.
-*   **Proxy Integration**: Automatically update the best IP to SSR+, Passwall, and other proxy tools.
+*   **Proxy Integration**: Automatically update the best IP to SSR+, Passwall, MosDNS, astra-dns, and other proxy or DNS tools.
 *   **Visual Charts**: View history charts for latency and download speed trends.
 *   **Auto Core Download**: The package does not contain the core binary; it downloads automatically on the first run, reducing the package size.
 *   **Improved UI & Logs**: Redesigned status display and log format for better readability.

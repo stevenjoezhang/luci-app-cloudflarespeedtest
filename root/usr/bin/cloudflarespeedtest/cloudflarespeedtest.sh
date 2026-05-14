@@ -27,7 +27,7 @@ echolog() {
 
 function read_config(){
     get_global_config "enabled" "speed_limit" "custom_url" "threads" "custom_cron_enabled" "custom_cron" "t" "tp" "dt" "dn" "dd" "tl" "tll" "ipv6_enabled" "advanced" "proxy_mode" "github_proxy" "github_proxy_custom" "httping" "cfcolo"
-    get_servers_config "ssr_services" "ssr_enabled" "passwall_enabled" "passwall_services" "passwall2_enabled" "passwall2_services" "bypass_enabled" "bypass_services" "vssr_enabled" "vssr_services" "DNS_enabled" "HOST_enabled" "MosDNS_enabled" "MosDNS_ip_count" "openclash_restart"
+    get_servers_config "ssr_services" "ssr_enabled" "passwall_enabled" "passwall_services" "passwall2_enabled" "passwall2_services" "bypass_enabled" "bypass_services" "vssr_enabled" "vssr_services" "DNS_enabled" "HOST_enabled" "MosDNS_enabled" "MosDNS_ip_count" "openclash_restart" "AstraDNS_enabled" "AstraDNS_config" "AstraDNS_bin"
 }
 
 function appinit(){
@@ -351,6 +351,7 @@ function ip_replace(){
     else
         host_ip
         mosdns_ip
+        astra_dns_ip
         alidns_ip
         ssr_best_ip
         vssr_best_ip
@@ -421,6 +422,25 @@ function mosdns_ip() {
             /etc/init.d/openclash restart &>/dev/null
         fi
         echolog "MosDNS 写入完成，已写入IP: $bestips"
+    fi
+}
+
+function astra_dns_ip() {
+    if [ "x${AstraDNS_enabled}" == "x1" ] ;then
+        astra_config="${AstraDNS_config:-/etc/astra-dns/named.yaml}"
+        astra_bin="${AstraDNS_bin:-/usr/bin/astra-dns}"
+
+        if [ ! -x /usr/bin/cloudflarespeedtest/astra-dns.sh ]; then
+            echolog "astra-dns 写入失败: /usr/bin/cloudflarespeedtest/astra-dns.sh 不存在"
+            return 1
+        fi
+
+        if /usr/bin/cloudflarespeedtest/astra-dns.sh --result-csv "$IP_FILE" --config "$astra_config" --bin "$astra_bin" >>$LOG_FILE 2>&1; then
+            echolog "astra-dns 写入完成，配置文件: $astra_config"
+        else
+            echolog "astra-dns 写入失败，请检查配置文件路径、二进制路径和 YAML 格式"
+            return 1
+        fi
     fi
 }
 

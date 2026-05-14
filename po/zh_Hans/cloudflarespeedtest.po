@@ -273,3 +273,15 @@ msgstr "MosDNS IP 数量"
 
 msgid "OpenClash Restart"
 msgstr "重启 OpenClash"
+
+msgid "astra-dns"
+msgstr "astra-dns"
+
+msgid "astra-dns Enabled"
+msgstr "写入 astra-dns"
+
+msgid "astra-dns Config Path"
+msgstr "astra-dns 配置文件路径"
+
+msgid "astra-dns Binary Path"
+msgstr "astra-dns 二进制路径"
