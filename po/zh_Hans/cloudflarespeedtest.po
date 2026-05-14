@@ -17,8 +17,8 @@ msgstr "<a href=\"https://github.com/stevenjoezhang/luci-app-cloudflarespeedtest
 msgid "Cloudflare Speed Test"
 msgstr "Cloudflare 速度测试"
 
-msgid "Test Cloudflare CDN latency and speed to select the fastest IP. Other CDNs and websites with multiple resolved IPs are also supported"
-msgstr "「自选优选 IP」测试 Cloudflare CDN 延迟和速度，获取最快 IP。当然也支持其他 CDN / 多个解析 IP 的网站"
+msgid "Schedules and runs CloudflareSpeedTest with the selected IP list, automatically applying the fastest IPs to supported integrations"
+msgstr "使用所选 IP 列表定时运行 CloudflareSpeedTest，并自动将最快 IP 应用到支持的集成"
 
 msgid "Plugin Settings"
 msgstr "插件设置"

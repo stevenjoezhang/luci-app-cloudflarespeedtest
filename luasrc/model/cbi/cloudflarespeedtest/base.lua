@@ -3,7 +3,7 @@ require("luci.sys")
 local uci = luci.model.uci.cursor()
 
 m = Map("cloudflarespeedtest", translate("Cloudflare Speed Test"))
-m.description = translate("Test Cloudflare CDN latency and speed to select the fastest IP. Other CDNs and websites with multiple resolved IPs are also supported").."<br/>"..translate("<a href=\"https://github.com/stevenjoezhang/luci-app-cloudflarespeedtest\" target=\"_blank\">⭐ Star on GitHub</a>")
+m.description = translate("Schedules and runs CloudflareSpeedTest with the selected IP list, automatically applying the fastest IPs to supported integrations").."<br/>"..translate("<a href=\"https://github.com/stevenjoezhang/luci-app-cloudflarespeedtest\" target=\"_blank\">⭐ Star on GitHub</a>")
 m:section(SimpleSection).template = "cloudflarespeedtest/status"
 
 s = m:section(TypedSection, "global")
