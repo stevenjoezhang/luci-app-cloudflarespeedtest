@@ -42,6 +42,12 @@ o.description = translate("Enter a local file path, for example: /etc/cloudflare
 o:depends("ip_source", "custom_file")
 o.rmempty = false
 
+o = s:taboption("basic", Flag, "custom_allip", translate("Scan all IPs in each /24"))
+o.description = translate("Only applies to custom IP lists. Disabled by default, which means CloudflareSpeedTest will randomly test one IP from each /24. Enable this to pass -allip and scan every IP in each /24")
+o:depends("ip_source", "custom_file")
+o.default = 0
+o.rmempty = false
+
 o=s:taboption("basic", Value,"speed_limit",translate("Speed threshold (MB/s)"))
 o.description =translate("Only IPs with a download speed greater than this threshold will be retained. Please note, do not set this value too high — if no IP meets the requirement, CloudflareSpeedTest may waste excessive time and resources");
 o.datatype ="uinteger"

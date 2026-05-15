@@ -26,7 +26,7 @@ echolog() {
 }
 
 function read_config(){
-    get_global_config "enabled" "speed_limit" "custom_url" "threads" "custom_cron_enabled" "custom_cron" "t" "tp" "dt" "dn" "dd" "tl" "tll" "ipv6_enabled" "ip_source" "custom_ip_file" "advanced" "proxy_mode" "github_proxy" "github_proxy_custom" "httping" "cfcolo"
+    get_global_config "enabled" "speed_limit" "custom_url" "threads" "custom_cron_enabled" "custom_cron" "t" "tp" "dt" "dn" "dd" "tl" "tll" "ipv6_enabled" "ip_source" "custom_ip_file" "custom_allip" "advanced" "proxy_mode" "github_proxy" "github_proxy_custom" "httping" "cfcolo"
     get_servers_config "ssr_services" "ssr_enabled" "passwall_enabled" "passwall_services" "passwall2_enabled" "passwall2_services" "bypass_enabled" "bypass_services" "vssr_enabled" "vssr_services" "DNS_enabled" "HOST_enabled" "MosDNS_enabled" "MosDNS_ip_count" "openclash_restart" "AstraDNS_enabled" "AstraDNS_config" "AstraDNS_bin"
 }
 
@@ -258,6 +258,10 @@ function speed_test(){
 
     selected_ip_file="$(select_ip_file)"
     command="${command} -f ${selected_ip_file}"
+
+    if [ "${ip_source:-}" = "custom_file" ] && [ "${custom_allip:-0}" = "1" ] ; then
+        command="${command} -allip"
+    fi
 
     if [ $advanced -eq "1" ] ; then
         command="${command} -tl ${tl} -tll ${tll} -n ${threads} -t ${t} -dt ${dt} -dn ${dn}"
