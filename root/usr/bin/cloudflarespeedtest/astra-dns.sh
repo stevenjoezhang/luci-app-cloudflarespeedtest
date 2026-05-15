@@ -77,18 +77,10 @@ is_ip() {
 }
 
 find_astra_pids() {
-	if command -v pidof >/dev/null 2>&1; then
-		pids="$(pidof astra-dns 2>/dev/null || true)"
-		if [ -n "$pids" ]; then
-			printf '%s\n' "$pids"
-			return 0
-		fi
-	fi
-
 	if command -v pgrep >/dev/null 2>&1; then
-		pids="$(pgrep -x astra-dns 2>/dev/null || true)"
+		pids="$(pgrep -f "$ASTRA_BIN -c $CONFIG_FILE" 2>/dev/null || true)"
 		if [ -z "$pids" ]; then
-			pids="$(pgrep -f '/astra-dns( |$)' 2>/dev/null || true)"
+			pids="$(pgrep -f "$ASTRA_BIN" 2>/dev/null || true)"
 		fi
 		if [ -n "$pids" ]; then
 			printf '%s\n' "$pids"
