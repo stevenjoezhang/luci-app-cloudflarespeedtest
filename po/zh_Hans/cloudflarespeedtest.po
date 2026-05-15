@@ -154,6 +154,9 @@ msgstr "扫描每个 /24 中的全部 IP"
 msgid "Only applies to custom IP lists. Disabled by default, which means CloudflareSpeedTest will randomly test one IP from each /24. Enable this to pass -allip and scan every IP in each /24"
 msgstr "仅对自定义 IP 列表生效。默认关闭，表示 CloudflareSpeedTest 只会从每个 /24 中随机测试 1 个 IP。开启后会追加 -allip，扫描每个 /24 中的全部 IP"
 
+msgid "Custom IP list file is required when using Custom file"
+msgstr "当 IP 列表来源使用自定义文件时，必须填写自定义 IP 列表文件"
+
 msgid "Delayed speed measurement time"
 msgstr "延迟测速次数"
 

@@ -40,7 +40,14 @@ end
 o = s:taboption("basic", Value, "custom_ip_file", translate("Custom IP list file"))
 o.description = translate("Enter a local file path, for example: /etc/cloudflarespeedtest/ip.txt")
 o:depends("ip_source", "custom_file")
-o.rmempty = false
+o.rmempty = true
+function o.validate(self, value, section)
+	local ip_source = uci:get("cloudflarespeedtest", section, "ip_source")
+	if ip_source == "custom_file" and (not value or value == "") then
+		return nil, translate("Custom IP list file is required when using Custom file")
+	end
+	return value
+end
 
 o = s:taboption("basic", Flag, "custom_allip", translate("Scan all IPs in each /24"))
 o.description = translate("Only applies to custom IP lists. Disabled by default, which means CloudflareSpeedTest will randomly test one IP from each /24. Enable this to pass -allip and scan every IP in each /24")
