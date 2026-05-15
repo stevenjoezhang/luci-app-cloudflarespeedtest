@@ -18,7 +18,8 @@ The target YAML must follow the current astra-dns sample format and include
 both Cloudflare rewrite blocks:
   - one rewrite with `ip:`
   - one rewrite with `cname:`
-Each block must contain an `answer:` line.
+Each block must contain an `answer:` line. This script writes up to the
+first 3 valid IPs from the result CSV into that field.
 EOF
 }
 
@@ -26,16 +27,42 @@ log() {
 	printf '%s\n' "$*" >&2
 }
 
-extract_best_ip() {
+extract_best_ips() {
 	awk -F, '
+		BEGIN {
+			count = 0
+		}
 		NR >= 2 && $1 !~ /^#/ {
 			gsub(/^[[:space:]]+|[[:space:]]+$/, "", $1)
 			if ($1 != "") {
 				print $1
-				exit
+				count++
+				if (count >= 3) {
+					exit
+				}
 			}
 		}
 	' "$1"
+}
+
+build_answer_value() {
+	if [ "$#" -eq 1 ]; then
+		printf '%s\n' "$1"
+		return 0
+	fi
+
+	value="["
+	first=1
+	for ip in "$@"; do
+		if [ "$first" -eq 0 ]; then
+			value="$value, "
+		fi
+		value="$value\"$ip\""
+		first=0
+	done
+	value="$value]"
+
+	printf '%s\n' "$value"
 }
 
 is_ip() {
@@ -75,9 +102,9 @@ find_astra_pids() {
 rewrite_config() {
 	input="$1"
 	output="$2"
-	best_ip="$3"
+	answer_value="$3"
 
-	awk -v answer="$best_ip" '
+	awk -v answer="$answer_value" '
 		BEGIN {
 			in_ip = 0
 			in_cname = 0
@@ -196,21 +223,32 @@ if [ -z "$BACKUP_FILE" ]; then
 	BACKUP_FILE="${CONFIG_FILE}.bak"
 fi
 
-BEST_IP="$(extract_best_ip "$RESULT_CSV")"
-if [ -z "$BEST_IP" ]; then
-	log "failed to extract the best IP from $RESULT_CSV"
+BEST_IPS="$(extract_best_ips "$RESULT_CSV")"
+if [ -z "$BEST_IPS" ]; then
+	log "failed to extract any valid IP from $RESULT_CSV"
 	exit 1
 fi
 
-if ! is_ip "$BEST_IP"; then
-	log "invalid best IP: $BEST_IP"
-	exit 1
-fi
+old_ifs="$IFS"
+IFS='
+'
+set -- $BEST_IPS
+IFS="$old_ifs"
+
+for ip in "$@"; do
+	if ! is_ip "$ip"; then
+		log "invalid IP in result set: $ip"
+		exit 1
+	fi
+done
+
+ANSWER_VALUE="$(build_answer_value "$@")"
+LOG_IPS="$(printf '%s\n' "$BEST_IPS" | tr '\n' ' ' | sed 's/[[:space:]]*$//')"
 
 TMP_CONFIG="$(mktemp "${TMPDIR:-/tmp}/astra-dns-config.XXXXXX")"
 trap 'rm -f "$TMP_CONFIG"' EXIT INT TERM
 
-if ! rewrite_config "$CONFIG_FILE" "$TMP_CONFIG" "$BEST_IP"; then
+if ! rewrite_config "$CONFIG_FILE" "$TMP_CONFIG" "$ANSWER_VALUE"; then
 	log "failed to update Cloudflare rewrite blocks in $CONFIG_FILE"
 	exit 1
 fi
@@ -222,7 +260,7 @@ cp "$CONFIG_FILE" "$BACKUP_FILE"
 mv "$TMP_CONFIG" "$CONFIG_FILE"
 trap - EXIT INT TERM
 
-log "updated Cloudflare rewrite answers to $BEST_IP"
+log "updated Cloudflare rewrite answers to $LOG_IPS"
 
 if [ "$DO_RELOAD" -eq 1 ]; then
 	if pids="$(find_astra_pids)" && [ -n "$pids" ]; then
