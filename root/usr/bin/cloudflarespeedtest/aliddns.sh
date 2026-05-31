@@ -29,8 +29,23 @@ get_recordid() {
 	sed 's/RR/\n/g' | sed -n 's/.*RecordId[^0-9]*\([0-9]*\).*/\1\n/p' | sort -ru | sed /^$/d
 }
 
+log_response_error() {
+	local action="$1"
+	local response="$2"
+	local code message
+
+	code="$(echo "$response" | sed -n 's/.*"Code"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')"
+	message="$(echo "$response" | sed -n 's/.*"Message"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')"
+
+	if [ -n "$code" ] || [ -n "$message" ]; then
+		echolog "$action failed: ${code:-unknown} ${message}"
+	else
+		echolog "$action failed: $response"
+	fi
+}
+
 query_recordid() {
-	send_request "DescribeSubDomainRecords" "Line=$line&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&SubDomain=$sub_dm.$main_dm&Timestamp=$timestamp&Type=$type"
+	send_request "DescribeSubDomainRecords" "DomainName=$main_dm&Line=$line&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&SubDomain=$sub_dm.$main_dm&Timestamp=$timestamp&Type=$type"
 }
 
 update_record() {
@@ -64,29 +79,45 @@ aliddns() {
 		type=AAAA
 	fi
 
-	rrids=`query_recordid | get_recordid`
+	query_response=`query_recordid`
+	rrids=`echo "$query_response" | get_recordid`
+	if echo "$query_response" | grep -q '"Code"[[:space:]]*:'; then
+		log_response_error "QUERY record $type $sub_dm.$main_dm" "$query_response"
+	fi
+
+	failed=0
 	index=1
 	for ip in "$@"; do
 		[ -z "$ip" ] && continue
 		rrid=`echo "$rrids" | sed -n "${index}p"`
 
 		if [ -z "$rrid" ]; then
-			rrid=`add_record | get_recordid`
-			echolog "ADD record $rrid $type $ip"
+			response=`add_record`
+			rrid=`echo "$response" | get_recordid`
+			if [ -n "$rrid" ]; then
+				echolog "ADD record $rrid $type $ip"
+			else
+				log_response_error "ADD record $type $ip" "$response"
+				failed=1
+			fi
 		else
-			update_record "$rrid"
-			echolog "UPDATE record $rrid $type $ip"
-		fi
-		if [ -z "$rrid" ]; then
-			# failed
-			echolog "# ERROR, Please Check Config/Time"
+			response=`update_record "$rrid"`
+			if echo "$response" | grep -q '"Code"[[:space:]]*:'; then
+				log_response_error "UPDATE record $rrid $type $ip" "$response"
+				failed=1
+			else
+				echolog "UPDATE record $rrid $type $ip"
+			fi
 		fi
 		index=$((index + 1))
 	done
 
 	if [ $index -eq 1 ]; then
 		echolog "# ERROR, No IP provided"
+		exit 1
 	fi
+
+	exit $failed
 }
 
 

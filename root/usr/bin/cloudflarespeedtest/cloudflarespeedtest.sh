@@ -619,8 +619,11 @@ function alidns_ip(){
 
             for sub in $sub_domain
             do
-                /usr/bin/cloudflarespeedtest/aliddns.sh "$app_key" "$app_secret" "$main_domain" "$sub" "$line" "$bestip_is_ipv6" $bestips
-                echolog "更新域名${sub}阿里云DNS完成，已写入IP: $bestips"
+                if /usr/bin/cloudflarespeedtest/aliddns.sh "$app_key" "$app_secret" "$main_domain" "$sub" "$line" "$bestip_is_ipv6" $bestips; then
+                    echolog "更新域名${sub}阿里云DNS完成，已写入IP: $bestips"
+                else
+                    echolog "更新域名${sub}阿里云DNS失败，请检查上方阿里云API错误信息"
+                fi
                 sleep 1s
             done
         fi
