@@ -27,7 +27,7 @@ echolog() {
 
 function read_config(){
     get_global_config "enabled" "speed_limit" "custom_url" "threads" "custom_cron_enabled" "custom_cron" "t" "tp" "dt" "dn" "dd" "tl" "tll" "ipv6_enabled" "ip_source" "custom_ip_file" "custom_allip" "advanced" "proxy_mode" "github_proxy" "github_proxy_custom" "httping" "cfcolo"
-    get_servers_config "ssr_services" "ssr_enabled" "passwall_enabled" "passwall_services" "passwall2_enabled" "passwall2_services" "bypass_enabled" "bypass_services" "vssr_enabled" "vssr_services" "DNS_enabled" "HOST_enabled" "MosDNS_enabled" "MosDNS_ip_count" "openclash_restart" "AstraDNS_enabled" "AstraDNS_config" "AstraDNS_bin"
+    get_servers_config "ssr_services" "ssr_enabled" "passwall_enabled" "passwall_services" "passwall2_enabled" "passwall2_services" "bypass_enabled" "bypass_services" "vssr_enabled" "vssr_services" "DNS_enabled" "AliDNS_ip_count" "HOST_enabled" "MosDNS_enabled" "MosDNS_ip_count" "openclash_restart" "AstraDNS_enabled" "AstraDNS_config" "AstraDNS_bin"
 }
 
 function appinit(){
@@ -597,16 +597,30 @@ function restart_app(){
 
 function alidns_ip(){
     if [ "x${DNS_enabled}" == "x1" ] ;then
-        case "$bestip" in
-            *:*) bestip_is_ipv6=1 ;;
-            *) bestip_is_ipv6=0 ;;
-        esac
-        get_servers_config "DNS_type" "app_key" "app_secret" "main_domain" "sub_domain" "line"
-        if [ $DNS_type == "aliyun" ] ;then
+        get_servers_config "DNS_type" "app_key" "app_secret" "main_domain" "sub_domain" "line" "AliDNS_ip_count"
+        if [ "x${DNS_type}" == "xaliyun" ] ;then
+            count=1
+            case "$AliDNS_ip_count" in
+                ''|*[!0-9]*) count=1 ;;
+                *) [ "$AliDNS_ip_count" -gt 1 ] && count=$AliDNS_ip_count ;;
+            esac
+
+            bestips=$(sed -n "2,$((count + 1))p" $IP_FILE | grep -v '^#' | awk -F, '{print $1}' | sed '/^$/d' | tr '\n' ' ')
+            first_dns_ip=$(echo "$bestips" | awk '{print $1}')
+            case "$first_dns_ip" in
+                *:*) bestip_is_ipv6=1 ;;
+                *) bestip_is_ipv6=0 ;;
+            esac
+
+            if [ -z "$bestips" ]; then
+                echolog "阿里云DNS写入失败: 未找到可写入IP"
+                return
+            fi
+
             for sub in $sub_domain
             do
-                /usr/bin/cloudflarespeedtest/aliddns.sh $app_key $app_secret $main_domain $sub $line $bestip_is_ipv6 $bestip
-                echolog "更新域名${sub}阿里云DNS完成"
+                /usr/bin/cloudflarespeedtest/aliddns.sh "$app_key" "$app_secret" "$main_domain" "$sub" "$line" "$bestip_is_ipv6" $bestips
+                echolog "更新域名${sub}阿里云DNS完成，已写入IP: $bestips"
                 sleep 1s
             done
         fi

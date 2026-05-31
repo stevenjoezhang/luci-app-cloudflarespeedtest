@@ -30,7 +30,7 @@ get_recordid() {
 }
 
 query_recordid() {
-	send_request "DescribeSubDomainRecords" "SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&SubDomain=$sub_dm.$main_dm&Timestamp=$timestamp&Type=A"
+	send_request "DescribeSubDomainRecords" "Line=$line&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&SubDomain=$sub_dm.$main_dm&Timestamp=$timestamp&Type=$type"
 }
 
 update_record() {
@@ -46,32 +46,46 @@ del_record() {
 }
 
 aliddns() {
+	if [ "$#" -lt 7 ]; then
+		echolog "# ERROR, Missing arguments"
+		exit 1
+	fi
+
 	ak_id=$1
 	ak_sec=$2
 	main_dm=$3
 	sub_dm=$4
 	line=$5
 	isIpv6=$6
-	ip=$7
+	shift 6
 	type=A
 	
-	if [ $isIpv6 -eq "1" ] ;then
+	if [ "x${isIpv6}" = "x1" ] ;then
 		type=AAAA
 	fi
-echo  $ip
-echo  $type
-	rrid=`query_recordid | get_recordid`
-	
-	if [ -z "$rrid" ]; then
-		rrid=`add_record | get_recordid`
-		echolog "ADD record $rrid"
-	else
-		update_record $rrid
-		echolog "UPDATE record $rrid"
-	fi
-	if [ -z "$rrid" ]; then
-		# failed
-		echolog "# ERROR, Please Check Config/Time"
+
+	rrids=`query_recordid | get_recordid`
+	index=1
+	for ip in "$@"; do
+		[ -z "$ip" ] && continue
+		rrid=`echo "$rrids" | sed -n "${index}p"`
+
+		if [ -z "$rrid" ]; then
+			rrid=`add_record | get_recordid`
+			echolog "ADD record $rrid $type $ip"
+		else
+			update_record "$rrid"
+			echolog "UPDATE record $rrid $type $ip"
+		fi
+		if [ -z "$rrid" ]; then
+			# failed
+			echolog "# ERROR, Please Check Config/Time"
+		fi
+		index=$((index + 1))
+	done
+
+	if [ $index -eq 1 ]; then
+		echolog "# ERROR, No IP provided"
 	fi
 }
 
