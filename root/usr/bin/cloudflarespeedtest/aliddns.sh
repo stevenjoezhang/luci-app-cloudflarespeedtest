@@ -9,20 +9,50 @@ echolog() {
 urlencode() {
 	# urlencode url<string>
 	out=''
-	for c in $(echo -n $1 | sed 's/[^\n]/&\n/g'); do
+	for c in $(echo -n "$1" | sed 's/[^\n]/&\n/g'); do
 		case $c in
-			[a-zA-Z0-9._-]) out="$out$c" ;;
+			[a-zA-Z0-9._~-]) out="$out$c" ;;
 			*) out="$out$(printf '%%%02X' "'$c")" ;;
 		esac
 	done
 	echo -n $out
 }
 
+make_nonce() {
+	local nonce
+
+	nonce="$(cat /proc/sys/kernel/random/uuid 2>/dev/null)"
+	if [ -z "$nonce" ] && [ -r /dev/urandom ]; then
+		nonce="$(hexdump -n 16 -e '4/4 "%08x" 1 "\n"' /dev/urandom 2>/dev/null)"
+	fi
+	if [ -z "$nonce" ]; then
+		nonce="$(date +%s)-$$"
+	fi
+
+	echo -n "$nonce"
+}
+
+canonicalize_args() {
+	printf '%s' "$1" | tr '&' '\n' | while IFS='=' read -r key value; do
+		[ -n "$key" ] || continue
+		printf '%s=%s\n' "$(urlencode "$key")" "$(urlencode "$value")"
+	done | sort | awk 'BEGIN { ORS="" } { if (NR > 1) printf "&"; printf "%s", $0 }'
+}
+
 send_request() {
 	# send_request action<string> args<string>
-	local args="AccessKeyId=$ak_id&Action=$1&Format=json&$2&Version=2015-01-09"
-	local hash=$(urlencode $(echo -n "GET&%2F&$(urlencode $args)" | openssl dgst -sha1 -hmac "$ak_sec&" -binary | openssl base64))
-	curl -sSL --connect-timeout 5 "http://alidns.aliyuncs.com/?$args&Signature=$hash"
+	local timestamp="$(date -u "+%Y-%m-%dT%H:%M:%SZ")"
+	local nonce="$(make_nonce)"
+	local args="AccessKeyId=$ak_id&Action=$1&Format=json&SignatureMethod=HMAC-SHA1&SignatureNonce=$nonce&SignatureVersion=1.0&Timestamp=$timestamp&Version=2015-01-09"
+	local canonical_args hash
+
+	if [ -n "$2" ]; then
+		args="$args&$2"
+	fi
+
+	canonical_args="$(canonicalize_args "$args")"
+	hash=$(urlencode "$(echo -n "GET&%2F&$(urlencode "$canonical_args")" | openssl dgst -sha1 -hmac "$ak_sec&" -binary | openssl base64)")
+	curl -sSL --connect-timeout 5 "http://alidns.aliyuncs.com/?$canonical_args&Signature=$hash"
 }
 
 get_recordid() {
@@ -39,25 +69,27 @@ log_response_error() {
 
 	if [ -n "$code" ] || [ -n "$message" ]; then
 		echolog "$action failed: ${code:-unknown} ${message}"
+	elif [ -z "$response" ]; then
+		echolog "$action failed: empty response"
 	else
 		echolog "$action failed: $response"
 	fi
 }
 
 query_recordid() {
-	send_request "DescribeSubDomainRecords" "DomainName=$main_dm&Line=$line&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&SubDomain=$full_domain&Timestamp=$timestamp&Type=$type"
+	send_request "DescribeSubDomainRecords" "DomainName=$main_dm&Line=$line&SubDomain=$full_domain&Type=$type"
 }
 
 update_record() {
-	send_request "UpdateDomainRecord" "Line=$line&RR=$sub_dm&RecordId=$1&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&Timestamp=$timestamp&Type=$type&Value=$ip"
+	send_request "UpdateDomainRecord" "Line=$line&RR=$sub_dm&RecordId=$1&Type=$type&Value=$ip"
 }
 
 add_record() {
-	send_request "AddDomainRecord&DomainName=$main_dm" "Line=$line&RR=$sub_dm&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&Timestamp=$timestamp&Type=$type&Value=$ip"
+	send_request "AddDomainRecord" "DomainName=$main_dm&Line=$line&RR=$sub_dm&Type=$type&Value=$ip"
 }
 
 del_record() {
-	send_request "DeleteDomainRecord" "RecordId=$1&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&Timestamp=$timestamp"
+	send_request "DeleteDomainRecord" "RecordId=$1"
 }
 
 aliddns() {
@@ -125,8 +157,5 @@ aliddns() {
 
 	exit $failed
 }
-
-
-timestamp=$(date -u "+%Y-%m-%dT%H%%3A%M%%3A%SZ")
 
 aliddns "$@"
