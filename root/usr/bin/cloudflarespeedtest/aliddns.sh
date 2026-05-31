@@ -26,7 +26,7 @@ send_request() {
 }
 
 get_recordid() {
-	sed 's/RR/\n/g' | sed -n 's/.*RecordId[^0-9]*\([0-9]*\).*/\1\n/p' | sort -ru | sed /^$/d
+	sed 's/"RecordId"/\n"RecordId"/g' | sed -n 's/.*"RecordId"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | sort -ru | sed /^$/d
 }
 
 log_response_error() {
@@ -45,7 +45,7 @@ log_response_error() {
 }
 
 query_recordid() {
-	send_request "DescribeSubDomainRecords" "DomainName=$main_dm&Line=$line&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&SubDomain=$sub_dm.$main_dm&Timestamp=$timestamp&Type=$type"
+	send_request "DescribeSubDomainRecords" "DomainName=$main_dm&Line=$line&SignatureMethod=HMAC-SHA1&SignatureNonce=$timestamp&SignatureVersion=1.0&SubDomain=$full_domain&Timestamp=$timestamp&Type=$type"
 }
 
 update_record() {
@@ -77,6 +77,12 @@ aliddns() {
 	
 	if [ "x${isIpv6}" = "x1" ] ;then
 		type=AAAA
+	fi
+
+	if [ "x${sub_dm}" = "x@" ]; then
+		full_domain="$main_dm"
+	else
+		full_domain="$sub_dm.$main_dm"
 	fi
 
 	query_response=`query_recordid`
