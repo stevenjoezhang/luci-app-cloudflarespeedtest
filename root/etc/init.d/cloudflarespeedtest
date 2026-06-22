@@ -5,38 +5,71 @@ START=99
 USE_PROCD=1
 
 CRON_FILE=/etc/crontabs/root
+CRON_COMMAND=/usr/bin/cloudflarespeedtest/cloudflarespeedtest.sh
+CRON_PATTERN="$CRON_COMMAND start"
 
 service_triggers() {
 	procd_add_reload_trigger "cloudflarespeedtest"
 }
 
+write_cron_if_changed() {
+	local tmp
+
+	tmp="$(mktemp /tmp/cloudflarespeedtest-cron.XXXXXX)" || return 1
+	if [ -f "$CRON_FILE" ]; then
+		grep -Fv "$CRON_PATTERN" "$CRON_FILE" > "$tmp"
+	else
+		: > "$tmp"
+	fi
+
+	if [ -n "$1" ]; then
+		echo "$1" >> "$tmp"
+	fi
+
+	if [ -f "$CRON_FILE" ] && cmp -s "$tmp" "$CRON_FILE"; then
+		rm -f "$tmp"
+		return 0
+	fi
+
+	if [ ! -f "$CRON_FILE" ] && [ ! -s "$tmp" ]; then
+		rm -f "$tmp"
+		return 0
+	fi
+
+	mkdir -p "$(dirname "$CRON_FILE")"
+	cat "$tmp" > "$CRON_FILE"
+	rm -f "$tmp"
+	/etc/init.d/cron restart
+}
+
 add_cron(){
 	local enabled
-	config_get_bool enabled $1 enabled
+	local cron_line
+	config_get_bool enabled "$1" enabled
 
-	del_cron
-
-	if	[ $enabled = 1 ] ; then
+	if	[ "$enabled" = 1 ] ; then
 		local hour
 		local custom_cron_enabled
 		local custom_cron
 
-		config_get hour $1 hour
-		config_get_bool custom_cron_enabled $1 custom_cron_enabled
-		config_get custom_cron $1 custom_cron
+		config_get hour "$1" hour
+		config_get_bool custom_cron_enabled "$1" custom_cron_enabled
+		config_get custom_cron "$1" custom_cron
 
-		if [ $custom_cron_enabled = 1 ] ; then
- 			echo "$custom_cron /usr/bin/cloudflarespeedtest/cloudflarespeedtest.sh start" >> $CRON_FILE
+		if [ "$custom_cron_enabled" = 1 ] ; then
+ 			cron_line="$custom_cron $CRON_PATTERN"
 		else
-			echo "0 */$hour * * * /usr/bin/cloudflarespeedtest/cloudflarespeedtest.sh start" >> $CRON_FILE
+			cron_line="0 */$hour * * * $CRON_PATTERN"
 		fi
-		crontab $CRON_FILE
 	fi
+
+	write_cron_if_changed "$cron_line"
 }
 
-del_cron(){	
-	sed -i '/cloudflarespeedtest/d' $CRON_FILE
-	/etc/init.d/cron restart
+del_cron(){
+	[ -f "$CRON_FILE" ] || return 0
+	grep -Fq "$CRON_PATTERN" "$CRON_FILE" || return 0
+	write_cron_if_changed
 }
 
 stop_instance(){
@@ -52,6 +85,5 @@ start_service() {
 	config_foreach add_cron global	 
 }
 reload_service() {
-	stop
-	start
+	start_service
 }

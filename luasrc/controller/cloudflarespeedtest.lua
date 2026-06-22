@@ -74,7 +74,7 @@ end
 function get_history()
 	local fs = require "nixio.fs"
 	local history = {}
-	local base_file = "/usr/share/CloudflareSpeedTest/result.csv"
+	local base_file = "/tmp/CloudflareSpeedTest/result.csv"
 
 	-- 解析单个CSV文件的函数
 	local function parse_csv_file(filepath)

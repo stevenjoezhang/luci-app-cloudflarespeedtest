@@ -185,7 +185,7 @@ o:depends("httping", 1)
 s=m:section(TypedSection, "global")
 s.title = translate("Best IP")
 s.anonymous=true
-local a="/usr/share/CloudflareSpeedTest/result.csv"
+local a="/tmp/CloudflareSpeedTest/result.csv"
 tvIPs=s:option(TextValue,"syipstext")
 tvIPs.rows=8
 tvIPs.readonly="readonly"

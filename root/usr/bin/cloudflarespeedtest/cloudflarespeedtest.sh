@@ -1,7 +1,8 @@
 #!/bin/sh
 
 LOG_FILE='/tmp/cloudflarespeedtest.log'
-IP_FILE='/usr/share/CloudflareSpeedTest/result.csv'
+RESULT_DIR='/tmp/CloudflareSpeedTest'
+IP_FILE="$RESULT_DIR/result.csv"
 IPV4_TXT='/usr/share/CloudflareSpeedTest/ip.txt'
 IPV6_TXT='/usr/share/CloudflareSpeedTest/ipv6.txt'
 
@@ -246,6 +247,7 @@ function select_ip_file(){
 function speed_test(){
 
     rm -rf $LOG_FILE
+    mkdir -p "$RESULT_DIR"
 
     if [ ! -e /usr/bin/cdnspeedtest ]; then
         download_core >>$LOG_FILE
