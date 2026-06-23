@@ -481,9 +481,15 @@ return view.extend({
 
 			const root = E([], [
 				E('div', { 'class': 'cbi-section' }, [ statusNode ]),
-				formNode,
-				chartNode
+				formNode
 			]);
+
+			const formActions = formNode.querySelector('.cbi-page-actions');
+
+			if (formActions && formActions.parentNode)
+				formActions.parentNode.insertBefore(chartNode, formActions);
+			else
+				formNode.appendChild(chartNode);
 
 			poll.add(L.bind(this.pollStatus, this, statusNode, actionButton), 3);
 
