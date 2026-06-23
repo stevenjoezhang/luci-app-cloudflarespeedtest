@@ -2,9 +2,15 @@
 	"luci-app-cloudflarespeedtest": {
 		"description": "Grant UCI access for luci-app-cloudflarespeedtest",
 		"read": {
+			"ubus": {
+				"cloudflarespeedtest": [ "status", "get_log", "get_history", "get_best_result", "list_nodes" ]
+			},
 			"uci": [ "cloudflarespeedtest" ]
 		},
 		"write": {
+			"ubus": {
+				"cloudflarespeedtest": [ "start", "stop" ]
+			},
 			"uci": [ "cloudflarespeedtest" ]
 		}
 	}

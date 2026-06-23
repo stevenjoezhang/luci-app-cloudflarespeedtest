@@ -1,0 +1,40 @@
+{
+	"admin/services/cloudflarespeedtest": {
+		"title": "Cloudflare Speed Test",
+		"order": 99,
+		"action": {
+			"type": "firstchild"
+		},
+		"depends": {
+			"acl": [ "luci-app-cloudflarespeedtest" ],
+			"uci": { "cloudflarespeedtest": true }
+		}
+	},
+
+	"admin/services/cloudflarespeedtest/general": {
+		"title": "Plugin Settings",
+		"order": 1,
+		"action": {
+			"type": "view",
+			"path": "cloudflarespeedtest/general"
+		}
+	},
+
+	"admin/services/cloudflarespeedtest/third-party": {
+		"title": "Third Party Settings",
+		"order": 2,
+		"action": {
+			"type": "view",
+			"path": "cloudflarespeedtest/third-party"
+		}
+	},
+
+	"admin/services/cloudflarespeedtest/logread": {
+		"title": "Logs",
+		"order": 3,
+		"action": {
+			"type": "view",
+			"path": "cloudflarespeedtest/logread"
+		}
+	}
+}

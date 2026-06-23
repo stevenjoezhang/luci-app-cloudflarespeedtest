@@ -6,8 +6,7 @@ rm -rf $workdir
 txt=$(cat applications/luci-app-cloudflarespeedtest/Makefile|tr '\n' ',')
 version=`echo $txt|sed -r 's/.*PKG_VERSION:=(.*),PKG_RELEASE.*/\1/'`
 
-mkdir -p $workdir/luci-app-cloudflarespeedtest/usr/lib/lua/luci
-[ -d applications/luci-app-cloudflarespeedtest/luasrc ] && cp -R applications/luci-app-cloudflarespeedtest/luasrc/* $workdir/luci-app-cloudflarespeedtest/usr/lib/lua/luci/
+[ -d applications/luci-app-cloudflarespeedtest/htdocs ] && mkdir -p $workdir/luci-app-cloudflarespeedtest/www && cp -R applications/luci-app-cloudflarespeedtest/htdocs/* $workdir/luci-app-cloudflarespeedtest/www/
 [ -d applications/luci-app-cloudflarespeedtest/root ] && cp -R applications/luci-app-cloudflarespeedtest/root/* $workdir/luci-app-cloudflarespeedtest/
 chmod +x $workdir/luci-app-cloudflarespeedtest/etc/init.d/* >/dev/null 2>&1
 [ -d applications/luci-app-cloudflarespeedtest/po ] && sudo -E apt-get -y install gcc make && \
@@ -21,7 +20,7 @@ mkdir -p $workdir/luci-app-cloudflarespeedtest/CONTROL
 cat > $workdir/luci-app-cloudflarespeedtest/CONTROL/control <<EOF
 Package: luci-app-cloudflarespeedtest
 Version: ${version}
-Depends: libc cdnspeedtest
+Depends: libc, cdnspeedtest, rpcd-mod-ucode, ucode-mod-fs, ucode-mod-uci, lua
 Architecture: all
 Maintainer: mingxiaoyu <fengying0347@163.com>
 Section: luci
