@@ -258,7 +258,7 @@ return view.extend({
 		let m, s, o;
 		let actionButton;
 		const status = data[1] || {};
-		const bestResult = data[2] || {};
+		const bestResult = data[2] || '';
 		const history = data[3] || [];
 
 		m = new form.Map('cloudflarespeedtest', _('Cloudflare Speed Test'),
@@ -458,7 +458,7 @@ return view.extend({
 		o.readonly = true;
 		o.wrap = 'off';
 		o.cfgvalue = function() {
-			return bestResult.content || '';
+			return typeof bestResult == 'string' ? bestResult : (bestResult.content || '');
 		};
 		o.write = function() {};
 
