@@ -199,9 +199,22 @@ function get_history() {
 }
 
 function get_best_result() {
-	let lines = read_lines(RESULT_FILE);
-	let start = length(lines) > 100 ? length(lines) - 100 : 0;
+	let result_file = RESULT_FILE;
+	let lines;
+	let start;
 	let out = [];
+
+	if (!parse_csv_file(result_file)) {
+		for (let i = 1; i <= 9; i++) {
+			if (parse_csv_file(RESULT_FILE + '.' + i)) {
+				result_file = RESULT_FILE + '.' + i;
+				break;
+			}
+		}
+	}
+
+	lines = read_lines(result_file);
+	start = length(lines) > 100 ? length(lines) - 100 : 0;
 
 	for (let i = start; i < length(lines); i++)
 		if (lines[i] != null)
