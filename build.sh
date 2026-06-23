@@ -20,7 +20,7 @@ mkdir -p $workdir/luci-app-cloudflarespeedtest/CONTROL
 cat > $workdir/luci-app-cloudflarespeedtest/CONTROL/control <<EOF
 Package: luci-app-cloudflarespeedtest
 Version: ${version}
-Depends: libc, cdnspeedtest, rpcd-mod-ucode, ucode-mod-fs, ucode-mod-uci, lua
+Depends: libc, curl
 Architecture: all
 Maintainer: mingxiaoyu <fengying0347@163.com>
 Section: luci
