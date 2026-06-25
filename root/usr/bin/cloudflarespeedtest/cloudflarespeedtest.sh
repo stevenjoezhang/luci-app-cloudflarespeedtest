@@ -172,7 +172,7 @@ function download_core() {
         exit 1
     fi
 
-    # Decompress .tar.gz to .tar, run lua patch on the .tar, then extract the .tar
+    # Decompress .tar.gz to .tar, run ucode patch on the .tar, then extract the .tar
     gzfile="/tmp/${link##*/}"
     tarfile="${gzfile%.gz}"
 
@@ -181,9 +181,9 @@ function download_core() {
         gzip -d "$gzfile" || (echo "Failed to decompress $gzfile" && exit 1)
     fi
 
-    # If original was gz (now we have a .tar), run patch.lua on the tar then extract it
+    # If original was gz (now we have a .tar), run patch.uc on the tar then extract it
     if [ "${gzfile##*.}" = "gz" ]; then
-        lua /usr/bin/cloudflarespeedtest/patch.lua "$tarfile"
+        ucode /usr/bin/cloudflarespeedtest/patch.uc "$tarfile"
         tar -xf "$tarfile" -C "/tmp/"
         if [ ! -e "/tmp/cfst" ]; then
             echo "Failed to extract core from archive."

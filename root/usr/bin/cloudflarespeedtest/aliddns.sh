@@ -9,9 +9,9 @@ echolog() {
 	printf '%s: %s\n' "$d" "$*" >>"$LOG_FILE"
 }
 
-if ! command -v lua >/dev/null 2>&1; then
-	echolog "# ERROR, lua command not found"
+if ! command -v ucode >/dev/null 2>&1; then
+	echolog "# ERROR, ucode command not found"
 	exit 1
 fi
 
-exec lua "$SCRIPT_DIR/aliddns.lua" "$@"
+exec ucode "$SCRIPT_DIR/aliddns.uc" "$@"
