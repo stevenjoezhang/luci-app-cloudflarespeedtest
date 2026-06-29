@@ -9,6 +9,8 @@
 
 This project is a fork of [mingxiaoyu/luci-app-cloudflarespeedtest](https://github.com/mingxiaoyu/luci-app-cloudflarespeedtest) with significant refactoring and improvements.
 
+> If you want to use the best CloudflareSpeedTest IPs directly for DNS resolution and also need ad filtering, you might want to check out the author's [Astra DNS](https://github.com/astra-sec/astra-dns) and its LuCI plugin [luci-app-astra-dns](https://github.com/astra-sec/luci-app-astra-dns).
+
 ## Features
 
 *   **Auto Speed Test**: Periodically or manually test Cloudflare IPs to find the best one.

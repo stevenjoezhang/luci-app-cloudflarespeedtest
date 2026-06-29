@@ -9,6 +9,8 @@
 
 本项目 fork 自 [mingxiaoyu/luci-app-cloudflarespeedtest](https://github.com/mingxiaoyu/luci-app-cloudflarespeedtest)，并在原版基础上进行了大量的重构与改进。
 
+> 如果你希望把 CloudflareSpeedTest 的优选 IP 直接用于 DNS 解析，并同时需要广告过滤功能，可以试试作者开发的 [Astra DNS](https://github.com/astra-sec/astra-dns) 和它的 LuCI 插件 [luci-app-astra-dns](https://github.com/astra-sec/luci-app-astra-dns)。
+
 ## 主要特性
 
 *   **自动测速与优选**：定期或手动运行 CloudflareSpeedTest，筛选最佳 IP。
