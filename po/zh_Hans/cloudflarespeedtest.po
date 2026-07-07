@@ -217,8 +217,8 @@ msgstr "GFW 列表"
 msgid "CLOSE"
 msgstr "关闭"
 
-msgid "Switch to the selected proxy mode during the speed test"
-msgstr "在速度测试时切换到选定的代理模式"
+msgid "During speed tests, temporarily apply the selected proxy mode to supported proxy applications: ShadowSocksR Plus+, PassWall, PassWall2, Vssr, Bypass, HomeProxy, and OpenClash (CLOSE only)."
+msgstr "速度测试期间，对支持的代理应用临时应用所选模式：ShadowSocksR Plus+、PassWall、PassWall2、Vssr、Bypass、HomeProxy、OpenClash（仅支持关闭）。"
 
 msgid "GitHub Mirror"
 msgstr "GitHub 镜像"

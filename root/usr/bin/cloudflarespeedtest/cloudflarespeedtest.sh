@@ -38,6 +38,7 @@ function appinit(){
     bypass_started='';
     vssr_started='';
     homeproxy_started='';
+    openclash_started='';
 }
 
 function homeproxy_client_active() {
@@ -98,6 +99,35 @@ function restore_homeproxy() {
     uci commit homeproxy
     /etc/init.d/homeproxy restart 2>/dev/null
     echolog "HomeProxy 重启完成"
+}
+
+function prepare_openclash() {
+    [ "$proxy_mode" == "close" ] || return 0
+    [ -x /etc/init.d/openclash ] || return 0
+    [ -f /etc/config/openclash ] || return 0
+
+    openclash_original_enable="$(uci -q get openclash.config.enable 2>/dev/null)"
+    [ "x${openclash_original_enable}" == "x1" ] || return 0
+
+    openclash_started='1'
+    uci -q set openclash.config.enable="0"
+    uci -q commit openclash
+    /etc/init.d/openclash stop &>/dev/null
+    echolog "OpenClash 已在测速期间临时关闭"
+}
+
+function restore_openclash() {
+    if [ "x${openclash_started}" != "x1" ] ;then
+        return 0
+    fi
+
+    uci -q set openclash.config.enable="${openclash_original_enable}"
+    uci -q commit openclash
+
+    if [ "x${openclash_original_enable}" == "x1" ] ;then
+        /etc/init.d/openclash start &>/dev/null
+        echolog "OpenClash 重启完成"
+    fi
 }
 
 check_wgetcurl(){
@@ -371,6 +401,7 @@ function speed_test(){
     fi
 
     prepare_homeproxy
+    prepare_openclash
 
     echo $command >> $LOG_FILE 2>&1
     echolog "-----------start----------"
@@ -616,6 +647,7 @@ function restart_app(){
     fi
 
     restore_homeproxy
+    restore_openclash
 }
 
 function alidns_ip(){
@@ -656,10 +688,38 @@ function alidns_ip(){
 
 read_config
 
+function run_start(){
+    speed_test
+    rc=$?
+
+    if [ $rc -eq 0 ] ;then
+        ip_replace
+        return $?
+    fi
+
+    restart_app
+    return $rc
+}
+
+function run_test(){
+    speed_test
+    rc=$?
+    restart_app
+    return $rc
+}
+
 # 启动参数
 if [ "$1" ] ;then
-    [ $1 == "start" ] && speed_test && ip_replace
-    [ $1 == "test" ] && speed_test
-    [ $1 == "replace" ] && ip_replace
-    exit
+    case "$1" in
+        start)
+            run_start
+            ;;
+        test)
+            run_test
+            ;;
+        replace)
+            ip_replace
+            ;;
+    esac
+    exit $?
 fi
