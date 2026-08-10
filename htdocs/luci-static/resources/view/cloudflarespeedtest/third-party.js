@@ -101,7 +101,8 @@ return view.extend({
 
 		s.tab('dnshost', _('HOST'));
 		o = s.taboption('dnshost', form.Flag, 'HOST_enabled', _('HOST Enabled'));
-		o = s.taboption('dnshost', form.Value, 'host_domain', _('Domain'));
+		o = s.taboption('dnshost', form.Value, 'host_domain', _('Domain'),
+			_('Separate multiple domains with commas, for example: a.example.com,b.example.com'));
 		o.rmempty = true;
 		o.depends('HOST_enabled', '1');
 

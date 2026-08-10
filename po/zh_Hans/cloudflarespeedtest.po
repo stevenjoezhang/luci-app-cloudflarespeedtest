@@ -292,6 +292,9 @@ msgstr "启用 HOST"
 msgid "Domain"
 msgstr "域名"
 
+msgid "Separate multiple domains with commas, for example: a.example.com,b.example.com"
+msgstr "多个域名请使用英文逗号分隔，例如：a.example.com,b.example.com"
+
 msgid "MosDNS Enabled"
 msgstr "写入 MosDNS"
 
