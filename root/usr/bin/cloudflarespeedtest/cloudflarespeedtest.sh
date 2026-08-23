@@ -63,14 +63,14 @@ function prepare_homeproxy() {
     homeproxy_original_main_udp_node="$(uci get homeproxy.config.main_udp_node 2>/dev/null)"
     homeproxy_original_default_outbound="$(uci get homeproxy.routing.default_outbound 2>/dev/null)"
 
-    if [ $proxy_mode == "close" ] ;then
+    if [ "$proxy_mode" = "close" ] ;then
         if [ "x${homeproxy_original_routing_mode}" = "xcustom" ] ;then
             uci set homeproxy.routing.default_outbound="nil"
         else
             uci set homeproxy.config.main_node="nil"
             uci set homeproxy.config.main_udp_node="nil"
         fi
-    elif [ $proxy_mode == "gfw" ] ;then
+    elif [ "$proxy_mode" = "gfw" ] ;then
         if [ "x${homeproxy_original_routing_mode}" = "xcustom" ] ;then
             echolog "HomeProxy 当前为自定义路由，测速期间临时停用客户端代理"
             uci set homeproxy.routing.default_outbound="nil"
@@ -132,12 +132,32 @@ function restore_openclash() {
 
 check_wgetcurl(){
     echo "Checking for wget or curl..."
-    which wget && downloader="wget --no-check-certificate -T 20 -O" && return
-    which curl && downloader="curl -L -k --retry 2 --connect-timeout 20 -o" && return
-    [ -z "$1" ] && opkg update || (echo "Failed to run opkg update" && exit 1)
-    [ -z "$1" ] && (opkg remove wget wget-nossl --force-depends ; opkg install wget ; check_wgetcurl 1 ;return)
-    [ "$1" == "1" ] && (opkg install curl ; check_wgetcurl 2 ; return)
-    echo "Error: curl and wget not found" && exit 1
+    local attempt
+
+    for attempt in 1 2 3; do
+        if which wget >/dev/null 2>&1; then
+            downloader="wget --no-check-certificate -T 20 -O"
+            return 0
+        fi
+        if which curl >/dev/null 2>&1; then
+            downloader="curl -L -k --retry 2 --connect-timeout 20 -o"
+            return 0
+        fi
+
+        case "$attempt" in
+            1)
+                opkg update || { echo "Failed to run opkg update"; return 1; }
+                opkg remove wget wget-nossl --force-depends 2>/dev/null
+                opkg install wget
+                ;;
+            2)
+                opkg install curl
+                ;;
+        esac
+    done
+
+    echo "Error: curl and wget not found"
+    return 1
 }
 
 function get_github_mirror_prefix() {
@@ -178,10 +198,10 @@ function download_core() {
                 mips64)   Arch="mips64"   ;;   # 64‑bit big‑endian
                 mipsel)   Arch="mipsle"   ;;   # 32‑bit little‑endian
                 mips)     Arch="mips"     ;;   # 32‑bit big‑endian
-                *) echo "Error: unknown OpenWrt MIPS flavour '$OPENWRT_ARCH'"; exit 1 ;;
+                *) echo "Error: unknown OpenWrt MIPS flavour '$OPENWRT_ARCH'"; return 1 ;;
             esac
             ;;
-        *) echo "Error: $um is not supported"; exit 1 ;;
+        *) echo "Error: $um is not supported"; return 1 ;;
     esac
 
     echo "Start download..."
@@ -194,13 +214,9 @@ function download_core() {
     fi
 
     echolog "Core download URL: $link"
-    check_wgetcurl
+    check_wgetcurl || return 1
 
-    $downloader /tmp/${link##*/} "$link" 2>&1
-    if [ "$?" != "0" ]; then
-        echo "Download failed"
-        exit 1
-    fi
+    $downloader "/tmp/${link##*/}" "$link" 2>&1 || { echo "Download failed"; return 1; }
 
     # Decompress .tar.gz to .tar, run ucode patch on the .tar, then extract the .tar
     gzfile="/tmp/${link##*/}"
@@ -208,18 +224,21 @@ function download_core() {
 
     # If we have a .gz file, decompress it to produce a .tar
     if [ "${gzfile##*.}" = "gz" ] && [ -f "$gzfile" ]; then
-        gzip -d "$gzfile" || (echo "Failed to decompress $gzfile" && exit 1)
+        gzip -d "$gzfile" || { echo "Failed to decompress $gzfile"; return 1; }
     fi
 
     # If original was gz (now we have a .tar), run patch.uc on the tar then extract it
     if [ "${gzfile##*.}" = "gz" ]; then
         ucode /usr/bin/cloudflarespeedtest/patch.uc "$tarfile"
-        tar -xf "$tarfile" -C "/tmp/"
+        tar -xf "$tarfile" -C "/tmp/" || { echo "Failed to extract $tarfile"; return 1; }
         if [ ! -e "/tmp/cfst" ]; then
             echo "Failed to extract core from archive."
-            exit 1
+            return 1
         fi
         downloadbin="/tmp/cfst"
+    else
+        echo "Error: unexpected archive format: $gzfile"
+        return 1
     fi
 
     echo "Download success. Start copy."
@@ -288,7 +307,11 @@ function speed_test(){
     }
 
     if [ ! -e /usr/bin/cdnspeedtest ]; then
-        download_core >>$LOG_FILE
+        download_core >>$LOG_FILE || {
+            echolog "核心程序下载失败，保留上一次结果"
+            rm -f "$result_tmp"
+            return 1
+        }
     fi
 
     command="/usr/bin/cdnspeedtest -sl ${speed_limit} -url ${custom_url} -o ${result_tmp}"
@@ -300,12 +323,12 @@ function speed_test(){
         command="${command} -allip"
     fi
 
-    if [ $advanced -eq "1" ] ; then
-        command="${command} -tl ${tl} -tll ${tll} -n ${threads} -t ${t} -dt ${dt} -dn ${dn}"
-        if [ $dd -eq "1" ] ; then
+    if [ "${advanced:-0}" -eq "1" ] ; then
+        command="${command} -tl ${tl:-200} -tll ${tll:-40} -n ${threads:-200} -t ${t:-4} -dt ${dt:-10} -dn ${dn:-10}"
+        if [ "${dd:-0}" -eq "1" ] ; then
             command="${command} -dd"
         fi
-        if [ $tp -ne "443" ] ; then
+        if [ "${tp:-443}" -ne "443" ] ; then
             command="${command} -tp ${tp}"
         fi
         if [ "${httping:-0}" -eq "1" ] ; then
@@ -324,9 +347,9 @@ function speed_test(){
     ssr_original_server=$(uci get shadowsocksr.@global[0].global_server 2>/dev/null)
     ssr_original_run_mode=$(uci get shadowsocksr.@global[0].run_mode 2>/dev/null)
     if [ "x${ssr_original_server}" != "xnil" ] && [ "x${ssr_original_server}"  !=  "x" ] ;then
-        if [ $proxy_mode  == "close" ] ;then
+        if [ "$proxy_mode" = "close" ] ;then
             uci set shadowsocksr.@global[0].global_server="nil"
-            elif  [ $proxy_mode  == "gfw" ] ;then
+            elif  [ "$proxy_mode" = "gfw" ] ;then
             uci set shadowsocksr.@global[0].run_mode="gfw"
         fi
         ssr_started='1';
@@ -337,9 +360,9 @@ function speed_test(){
     passwall_server_enabled=$(uci get passwall.@global[0].enabled 2>/dev/null)
     passwall_original_run_mode=$(uci get passwall.@global[0].tcp_proxy_mode 2>/dev/null)
     if [ "x${passwall_server_enabled}" == "x1" ] ;then
-        if [ $proxy_mode  == "close" ] ;then
+        if [ "$proxy_mode" = "close" ] ;then
             uci set passwall.@global[0].enabled="0"
-            elif  [ $proxy_mode  == "gfw" ] ;then
+            elif  [ "$proxy_mode" = "gfw" ] ;then
             uci set passwall.@global[0].tcp_proxy_mode="gfwlist"
         fi
         passwall_started='1';
@@ -350,9 +373,9 @@ function speed_test(){
     passwall2_server_enabled=$(uci get passwall2.@global[0].enabled 2>/dev/null)
     passwall2_original_run_mode=$(uci get passwall2.@global[0].tcp_proxy_mode 2>/dev/null)
     if [ "x${passwall2_server_enabled}" == "x1" ] ;then
-        if [ $proxy_mode  == "close" ] ;then
+        if [ "$proxy_mode" = "close" ] ;then
             uci set passwall2.@global[0].enabled="0"
-            elif  [ $proxy_mode  == "gfw" ] ;then
+            elif  [ "$proxy_mode" = "gfw" ] ;then
             uci set passwall2.@global[0].tcp_proxy_mode="gfwlist"
         fi
         passwall2_started='1';
@@ -364,9 +387,9 @@ function speed_test(){
     vssr_original_run_mode=$(uci get vssr.@global[0].run_mode 2>/dev/null)
     if [ "x${vssr_original_server}" != "xnil" ] && [ "x${vssr_original_server}"  !=  "x" ] ;then
 
-        if [ $proxy_mode  == "close" ] ;then
+        if [ "$proxy_mode" = "close" ] ;then
             uci set vssr.@global[0].global_server="nil"
-            elif  [ $proxy_mode  == "gfw" ] ;then
+            elif  [ "$proxy_mode" = "gfw" ] ;then
             uci set vssr.@global[0].run_mode="gfw"
         fi
         vssr_started='1';
@@ -377,9 +400,9 @@ function speed_test(){
     bypass_original_server=$(uci get bypass.@global[0].global_server 2>/dev/null)
     bypass_original_run_mode=$(uci get bypass.@global[0].run_mode 2>/dev/null)
     if [ "x${bypass_original_server}" != "x" ] ;then
-        if [ $proxy_mode  == "close" ] ;then
+        if [ "$proxy_mode" = "close" ] ;then
             uci set bypass.@global[0].global_server=""
-            elif  [ $proxy_mode  == "gfw" ] ;then
+            elif  [ "$proxy_mode" = "gfw" ] ;then
             uci set bypass.@global[0].run_mode="gfw"
         fi
         bypass_started='1';
@@ -409,7 +432,7 @@ function speed_test(){
     command_rc=$?
     echolog "-----------end------------"
 
-    if [ $command_rc -ne 0 ]; then
+    if [ "$command_rc" -ne 0 ]; then
         echolog "CloudflareST 测速失败，保留上一次结果"
         rm -f "$result_tmp"
         return $command_rc
@@ -472,9 +495,10 @@ function mosdns_ip() {
     if [ "x${MosDNS_enabled}" == "x1" ] ;then
         # 默认只取1个，除非配置了 MosDNS_ip_count
         count=1
-        if [ -n "$MosDNS_ip_count" ] && [ "$MosDNS_ip_count" -gt 1 ]; then
-            count=$MosDNS_ip_count
-        fi
+        case "$MosDNS_ip_count" in
+            ''|*[!0-9]*) count=1 ;;
+            *) [ "$MosDNS_ip_count" -gt 1 ] && count=$MosDNS_ip_count ;;
+        esac
 
         # 获取前 count 个 IP，注意结果文件的第一行通常是标题，所以从第2行开始取
         # sed -n "2,$((count + 1))p" 取第2行到第 count+1 行
@@ -592,9 +616,9 @@ function bypass_best_ip(){
 
 function restart_app(){
     if [ "x${ssr_started}" == "x1" ] ;then
-        if [ $proxy_mode  == "close" ] ;then
+        if [ "$proxy_mode" = "close" ] ;then
             uci set shadowsocksr.@global[0].global_server="${ssr_original_server}"
-            elif [ $proxy_mode  == "gfw" ] ;then
+            elif [ "$proxy_mode" = "gfw" ] ;then
             uci set  shadowsocksr.@global[0].run_mode="${ssr_original_run_mode}"
         fi
         uci commit shadowsocksr
@@ -603,9 +627,9 @@ function restart_app(){
     fi
 
     if [ "x${passwall_started}" == "x1" ] ;then
-        if [ $proxy_mode  == "close" ] ;then
+        if [ "$proxy_mode" = "close" ] ;then
             uci set passwall.@global[0].enabled="${passwall_server_enabled}"
-            elif [ $proxy_mode  == "gfw" ] ;then
+            elif [ "$proxy_mode" = "gfw" ] ;then
             uci set passwall.@global[0].tcp_proxy_mode="${passwall_original_run_mode}"
         fi
         uci commit passwall
@@ -614,9 +638,9 @@ function restart_app(){
     fi
 
     if [ "x${passwall2_started}" == "x1" ] ;then
-        if [ $proxy_mode  == "close" ] ;then
+        if [ "$proxy_mode" = "close" ] ;then
             uci set passwall2.@global[0].enabled="${passwall2_server_enabled}"
-            elif [ $proxy_mode  == "gfw" ] ;then
+            elif [ "$proxy_mode" = "gfw" ] ;then
             uci set passwall2.@global[0].tcp_proxy_mode="${passwall2_original_run_mode}"
         fi
         uci commit passwall2
@@ -625,9 +649,9 @@ function restart_app(){
     fi
 
     if [ "x${vssr_started}" == "x1" ] ;then
-        if [ $proxy_mode  == "close" ] ;then
+        if [ "$proxy_mode" = "close" ] ;then
             uci set vssr.@global[0].global_server="${vssr_original_server}"
-            elif [ $proxy_mode  == "gfw" ] ;then
+            elif [ "$proxy_mode" = "gfw" ] ;then
             uci set vssr.@global[0].run_mode="${vssr_original_run_mode}"
         fi
         uci commit vssr
@@ -636,9 +660,9 @@ function restart_app(){
     fi
 
     if [ "x${bypass_started}" == "x1" ] ;then
-        if [ $proxy_mode  == "close" ] ;then
+        if [ "$proxy_mode" = "close" ] ;then
             uci set bypass.@global[0].global_server="${bypass_original_server}"
-            elif [ $proxy_mode  == "gfw" ] ;then
+            elif [ "$proxy_mode" = "gfw" ] ;then
             uci set  bypass.@global[0].run_mode="${bypass_original_run_mode}"
         fi
         uci commit bypass
@@ -692,7 +716,7 @@ function run_start(){
     speed_test
     rc=$?
 
-    if [ $rc -eq 0 ] ;then
+    if [ "$rc" -eq 0 ] ;then
         ip_replace
         return $?
     fi
