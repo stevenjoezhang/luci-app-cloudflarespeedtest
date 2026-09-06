@@ -109,6 +109,24 @@ msgstr "最佳 IP"
 msgid "History Charts"
 msgstr "历史图表"
 
+msgid "Download speed"
+msgstr "下载速度"
+
+msgid "Speed"
+msgstr "速度"
+
+msgid "Latency"
+msgstr "延迟"
+
+msgid "Time"
+msgstr "时间"
+
+msgid "Region"
+msgstr "地区"
+
+msgid "Star on GitHub"
+msgstr "在 GitHub 上关注"
+
 msgid "Start"
 msgstr "开始"
 
