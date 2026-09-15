@@ -18,6 +18,7 @@ This project is a fork of [mingxiaoyu/luci-app-cloudflarespeedtest](https://gith
 *   **Visual Charts**: View history charts for latency and download speed trends.
 *   **Auto Core Download**: The package does not contain the core binary; it downloads automatically on the first run, reducing the package size.
 *   **Improved UI & Logs**: Redesigned status display and log format for better readability.
+*   **Curated IPv4 List**: The bundled list is based on [Cloudflare's public IPv4 ranges](https://www.cloudflare.com/ips-v4) and excludes ranges found to be restricted or unsuitable in validation: `108.162.192.0/18`, `162.158.0.0/16`, `162.159.0.0/18`, `172.64.228.0/24`, `172.68.0.0/14`, and `198.41.192.0/19`.
 
 ## Installation
 
