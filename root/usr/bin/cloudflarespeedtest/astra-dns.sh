@@ -11,7 +11,7 @@ Options:
   --config FILE       astra-dns YAML config file
   --bin FILE          astra-dns binary path (default: /usr/bin/astra-dns)
   --backup FILE       Backup path for the original config (default: CONFIG.bak)
-  --no-reload         Update config only, do not send SIGHUP
+  --no-reload         Update config only, do not request service reload
   -h, --help          Show this help
 
 The target YAML must follow the current astra-dns sample format and include
@@ -73,21 +73,6 @@ is_ip() {
 	if printf '%s\n' "$value" | grep -Eq '^[0-9A-Fa-f:]+$'; then
 		return 0
 	fi
-	return 1
-}
-
-find_astra_pids() {
-	if command -v pgrep >/dev/null 2>&1; then
-		pids="$(pgrep -f "$ASTRA_BIN -c $CONFIG_FILE" 2>/dev/null || true)"
-		if [ -z "$pids" ]; then
-			pids="$(pgrep -f "$ASTRA_BIN" 2>/dev/null || true)"
-		fi
-		if [ -n "$pids" ]; then
-			printf '%s\n' "$pids"
-			return 0
-		fi
-	fi
-
 	return 1
 }
 
@@ -255,10 +240,28 @@ trap - EXIT INT TERM
 log "updated Cloudflare rewrite answers to $LOG_IPS"
 
 if [ "$DO_RELOAD" -eq 1 ]; then
-	if pids="$(find_astra_pids)" && [ -n "$pids" ]; then
-		kill -HUP $pids
-		log "sent SIGHUP to astra-dns: $pids"
+	SERVICE_INIT="/etc/init.d/astra-dns"
+	if [ ! -x "$SERVICE_INIT" ]; then
+		log "astra-dns init script not found, config updated without reload"
+		exit 0
+	fi
+
+	if command -v uci >/dev/null 2>&1; then
+		service_config="$(uci -q get astra-dns.main.configpath 2>/dev/null || true)"
+		service_bin="$(uci -q get astra-dns.main.binpath 2>/dev/null || true)"
+		[ -n "$service_config" ] || service_config="/etc/astra-dns/named.yaml"
+		[ -n "$service_bin" ] || service_bin="/usr/bin/astra-dns"
+
+		if [ "$service_config" != "$CONFIG_FILE" ] || [ "$service_bin" != "$ASTRA_BIN" ]; then
+			log "astra-dns service paths do not match: config=$service_config bin=$service_bin"
+			exit 1
+		fi
+	fi
+
+	if "$SERVICE_INIT" reload >/dev/null 2>&1; then
+		log "astra-dns reload requested through $SERVICE_INIT"
 	else
-		log "astra-dns is not running, config updated without reload"
+		log "astra-dns reload failed"
+		exit 1
 	fi
 fi
